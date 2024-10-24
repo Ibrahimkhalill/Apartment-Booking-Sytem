@@ -9,9 +9,10 @@ const ViewReservation = () => {
   const [data, setData] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [reservationDeatils, setReservationDetails] = useState({});
-
+  const [reservationId, setReservationId] = useState(null);
   const [is_check_in, setIsCheckIn] = useState(false);
   const [is_check_out, setIsCheckOut] = useState(false);
+
   const fetchdata = async () => {
     try {
       setLoading(true);
@@ -41,11 +42,13 @@ const ViewReservation = () => {
     ) {
       // If currently viewing the same reservation, clear it
       setReservationDetails({});
+      setReservationId(null);
     } else {
       // Otherwise, set the selected reservation details
       setReservationDetails(item);
       setIsCheckIn(item.is_check_in);
       setIsCheckOut(item.is_check_out);
+      setReservationId(item.id);
     }
   };
 
@@ -85,6 +88,28 @@ const ViewReservation = () => {
     // Assuming you have a state to hold the filtered results
     setData(filteredData); // Update the state with filtered results
   };
+
+  function convertToLocalFormat(timestamp) {
+    const date = new Date(timestamp);
+
+    // Options for formatting the date
+    const options = {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true, // Set to true for AM/PM format
+    };
+
+    // Format the date in local time with AM/PM
+    return date
+      .toLocaleString("en-GB", options)
+      .replace(",", "")
+      .toLocaleUpperCase();
+  }
+
+  // Example usage
 
   return (
     <Sidebar>
@@ -127,16 +152,19 @@ const ViewReservation = () => {
             <>
               <div className="relative overflow-x-auto  shadow-md sm:rounded-lg w-full">
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <thead className="text-xs text-gray-700  bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
-                      <th scope="col" className="p-4">
-                        Serial
-                      </th>
                       <th scope="col" className="px-6 py-3">
                         Room No
                       </th>
                       <th scope="col" className="px-6 py-3">
                         Room Name
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Check In
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Check Out
                       </th>
                       <th scope="col" className="px-6 py-3">
                         Quantity
@@ -148,10 +176,10 @@ const ViewReservation = () => {
                         Amount
                       </th>
                       <th scope="col" className="px-6 py-3">
-                        IS Check In
+                        Is Check In
                       </th>
                       <th scope="col" className="px-6 py-3">
-                        IS Check Out
+                        Is Check Out
                       </th>
                       <th scope="col" className="px-6 py-3">
                         Arrival
@@ -164,12 +192,17 @@ const ViewReservation = () => {
                   </thead>
                   <tbody>
                     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                      <td className="px-6 py-4">1</td>
                       <td className="px-6 py-4">
                         {reservationDeatils.room_no?.room_no}
                       </td>
                       <td className="px-6 py-4">
                         {reservationDeatils.room_no?.room_type}
+                      </td>
+                      <td className="px-6 py-4">
+                        {reservationDeatils.check_in_date}
+                      </td>
+                      <td className="px-6 py-4">
+                        {reservationDeatils.check_out_date}
                       </td>
                       <td className="px-6 py-4">
                         {reservationDeatils.room_quantity}
@@ -260,11 +293,9 @@ const ViewReservation = () => {
                       Address
                     </th>
                     <th scope="col" className="px-6 py-3">
-                      Check In
+                      Booked On
                     </th>
-                    <th scope="col" className="px-6 py-3">
-                      Check Out
-                    </th>
+
                     <th scope="col" className="px-6 py-3">
                       Action
                     </th>
@@ -275,7 +306,9 @@ const ViewReservation = () => {
                     <tr
                       onClick={() => handleviewDeatils(item)} // Corrected event handler
                       key={index}
-                      className="bg-white border-b cursor-pointer dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                      className={`${
+                        reservationId === item.id ? "bg-textColor text-white" : "bg-white"
+                      }  border-b cursor-pointer dark:bg-gray-800 dark:border-gray-700 hover:bg-textColor hover:text-white dark:hover:bg-gray-600`}
                     >
                       <td className="px-6 py-4">{index + 1}</td>
                       <td className="px-6 py-4">{item.confirmation_number}</td>
@@ -283,8 +316,10 @@ const ViewReservation = () => {
                       <td className="px-6 py-4">{item.phone_number}</td>
                       <td className="px-6 py-4">{item.email}</td>
                       <td className="px-6 py-4">{item.address}</td>
-                      <td className="px-6 py-4">{item.check_in_date}</td>
-                      <td className="px-6 py-4">{item.check_out_date}</td>
+                      <td className="px-6 py-4">
+                        {convertToLocalFormat(item.booked_on)}
+                      </td>
+
                       <td className="px-5 py-4">
                         <button
                           title="Delete"

@@ -309,19 +309,20 @@ const CustomBookingDatePicker = ({ width }) => {
             {showDatePickers && (
               <div
                 ref={dropdownRef}
-                className={`sm:absolute fixed sm:top-20 flex flex-col py-5 bg-white md:left-0 right-0 z-50 w-full ${
+                className={`sm:absolute fixed md:top-[120px] lg:top-[140px] xl:top-[90px] flex flex-col py-5 bg-white md:left-0 right-0 z-50 w-full ${
                   width
-                    ? "h-[94vh] bottom-0"
-                    : "h-[88vh] xl:h-[45vh] sm:h-[45vh] xl:w-[46vw] sm:w-[60vw] bottom-0"
+                    ? "h-[95vh] bottom-0"
+                    : "h-[80vh]  md:h-[350px] bottom-0 xl:w-[45vw] md:w-[70vw]"
                 } xl:w-auto rounded-t-md md:rounded-md shadow-custom transition-transform duration-300 flex items-center justify-center ${
                   showDatePickers ? "translate-y-0" : "translate-y-full"
                 }`}
               >
                 <div
-                  className={`px-5 flex md:flex-row flex-col md:gap-10  ${
+                  className={`px-5 flex md:flex-row flex-col md:gap-10 ${
                     width ? "gap-7 " : ""
                   }`}
                 >
+                  {/* Left (Current Month) */}
                   <div className="flex flex-col">
                     <div className="flex justify-between items-center mb-2">
                       <button onClick={handlePrevMonth}>
@@ -360,46 +361,46 @@ const CustomBookingDatePicker = ({ width }) => {
                           day.month() === currentMonthDays[0].month();
                         return (
                           <button
-                            key={day.toString()} // Ensure the key is unique, you can also use day.format('YYYY-MM-DD') for better uniqueness
+                            key={day.toString()}
                             className={`p-3 px-4 text-center cursor-pointer ${
                               shouldHide
-                                ? "text-transparent pointer-events-none" // Hide and disable pointer events if needed
+                                ? "text-transparent pointer-events-none"
                                 : day.isBefore(today, "day")
-                                ? "text-gray-400" // Past dates styling
-                                : hasUserSelected // Check if the user has made a selection
+                                ? "text-gray-400"
+                                : hasUserSelected
                                 ? day.isSame(checkInDate)
-                                  ? "text-white rounded-l bg-blue-500" // Check-in date styling
+                                  ? "text-white rounded-l bg-blue-500"
                                   : day.isSame(checkOutDate)
-                                  ? "text-white rounded-r bg-blue-500" // Check-out date styling
+                                  ? "text-white rounded-r bg-blue-500"
                                   : isInRange(day)
-                                  ? "bg-gray-300" // Styling for dates between check-in and check-out
+                                  ? "bg-gray-300"
                                   : isInHoverRange(day)
-                                  ? "bg-gray-300" // Hover range styling
-                                  : "hover:bg-gray-300" // Default hover styling
-                                : day.isSame(today, "day") // Check if it's today
-                                ? "text-white bg-blue-500 rounded-l" // Apply rounded-l for today
-                                : day.isSame(today.add(1, "day"), "day") // Check if it's tomorrow
-                                ? "text-white bg-blue-500 rounded-r" // Apply rounded-r for tomorrow
-                                : "hover:bg-gray-300" // Default hover styling
+                                  ? "bg-gray-300"
+                                  : "hover:bg-gray-300"
+                                : day.isSame(today, "day")
+                                ? "text-white bg-blue-500 rounded-l"
+                                : day.isSame(today.add(1, "day"), "day")
+                                ? "text-white bg-blue-500 rounded-r"
+                                : "hover:bg-gray-300"
                             }`}
-                            onClick={() => !shouldHide && handleDateClick(day)} // Handle click if not hidden
+                            onClick={() => !shouldHide && handleDateClick(day)}
                             onMouseEnter={() =>
                               !shouldHide && setHoveredDate(day)
-                            } // Set hovered date if not hidden
+                            }
                             onMouseLeave={() =>
                               !shouldHide && setHoveredDate(null)
-                            } // Reset hovered date on leave if not hidden
+                            }
                           >
-                            {day.date()} {/* Display the day number */}
+                            {day.date()}
                           </button>
                         );
                       })}
                     </div>
                   </div>
 
-                  {/* Next Month Days */}
+                  {/* Right (Next Month) */}
                   <div className="flex flex-col">
-                    <div className="flex items-center justify-between mb-4 ">
+                    <div className="flex items-center justify-between mb-4">
                       <div></div>
                       <h3 className="font-bold text-lg text-center">
                         {currentMonth.add(1, "month").format("MMMM YYYY")}
@@ -424,7 +425,7 @@ const CustomBookingDatePicker = ({ width }) => {
                     </div>
 
                     {/* Next Month Days */}
-                    <div className="grid grid-cols-7 text-sm mt-2 ">
+                    <div className="grid grid-cols-7 text-sm mt-2">
                       {nextMonthDays.map((day) => {
                         const shouldHide =
                           day.month() ===
@@ -432,10 +433,10 @@ const CustomBookingDatePicker = ({ width }) => {
 
                         return (
                           <div
-                            key={day.toString()} // Ensure the key is unique, you can also use day.format() for better uniqueness
+                            key={day.toString()}
                             className={`p-3 px-4 text-center cursor-pointer ${
                               shouldHide
-                                ? "text-transparent pointer-events-none" // Make text transparent and disable pointer events
+                                ? "text-transparent pointer-events-none"
                                 : day.isBefore(today, "day")
                                 ? "text-gray-400"
                                 : day.isSame(checkInDate)
@@ -445,16 +446,16 @@ const CustomBookingDatePicker = ({ width }) => {
                                 : isInRange(day)
                                 ? "bg-gray-300"
                                 : isInHoverRange(day)
-                                ? "bg-gray-300" // Change this color as needed for the hover range
+                                ? "bg-gray-300"
                                 : "hover:bg-gray-300"
                             }`}
-                            onClick={() => !shouldHide && handleDateClick(day)} // Only handle click if not hidden
+                            onClick={() => !shouldHide && handleDateClick(day)}
                             onMouseEnter={() =>
                               !shouldHide && setHoveredDate(day)
-                            } // Set hovered date on hover if not hidden
+                            }
                             onMouseLeave={() =>
                               !shouldHide && setHoveredDate(null)
-                            } // Reset hovered date on leave if not hidden
+                            }
                           >
                             {day.date()}
                           </div>
@@ -464,7 +465,7 @@ const CustomBookingDatePicker = ({ width }) => {
                   </div>
                 </div>
 
-                <div className=" flex items-center justify-center px-3 md:hidden w-full">
+                <div className="flex items-center justify-center px-3 md:hidden w-full mt-4">
                   <button
                     className="bg-[#795f9e] text-white px-2 py-2 w-full rounded-md"
                     onClick={handleShowDatePickers}

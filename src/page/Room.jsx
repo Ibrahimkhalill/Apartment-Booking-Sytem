@@ -1,12 +1,27 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import roomVideo from "/video/room.mp4";
 import { useEffect, useState } from "react";
 import axiosInstance from "../component/axioxinstance";
 import Loading from "../component/Loading";
+
+import { IoSearch } from "react-icons/io5";
+import { IoCloseSharp } from "react-icons/io5";
+
+import BookNowDateCheacking from "../component/BookNowDateCheacking";
+import { useSelector } from "react-redux";
+import MessagesModal from "../component/MessagesModal";
 const Room = () => {
   const [room, setRoom] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [messagesmodalVisible, setMessgesModalVisible] = useState(false);
+  const [messges, setMessges] = useState("");
+  const checkInDate = useSelector((state) => state.booking.checkInDate);
+  const checkOutDate = useSelector((state) => state.booking.checkOutDate);
+  const rooms = useSelector((state) => state.booking.rooms);
+  const [booknowVisible, setBookNowVisible] = useState(false);
+  const totalAdults = rooms?.reduce((sum, room) => sum + room.adults, 0);
+  const [roomId, setRomId] = useState(null);
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchdata = async () => {
       try {
@@ -24,10 +39,85 @@ const Room = () => {
     };
     fetchdata();
   }, []);
-  console.log(import.meta.env.VITE_BASE_URL);
+  const handlePrebooked = async (item) => {
+    try {
+      const response = await axiosInstance.post("/api/book_room/", {
+        check_in: checkInDate?.format("YYYY-MM-DD"),
+        check_out: checkOutDate?.format("YYYY-MM-DD"),
+        room_quantity: rooms.length,
+        adults: totalAdults,
+        room: item.id,
+      }); // Replace with your API endpoint
+
+      if (response.status === 200) {
+        const queryParams = {
+          prebookingId: response.data.uuid,
+        };
+        const queryString = new URLSearchParams(queryParams).toString();
+        navigate(`/checkout?${queryString}`, {
+          state: {
+            data: item,
+            adults: totalAdults,
+            uuid: response.data.uuid,
+          },
+        });
+      } else {
+        setMessgesModalVisible(true);
+        setMessges(response.data.error);
+      }
+    } catch (error) {
+      console.error("Error booking room:", error);
+    }
+  };
+
+  const handleSearch = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.post(
+        `/api/search/available/room/${roomId}/`,
+        {
+          checkInDate: checkInDate?.format("YYYY-MM-DD"),
+          checkOutDate: checkOutDate?.format("YYYY-MM-DD"),
+          room_quantity: rooms.length,
+          rooms: rooms,
+        }
+      );
+      console.log("response.data", response);
+
+      if (response.status === 200) {
+        handlePrebooked(response.data);
+        setLoading(false);
+      } else {
+        alert(response.data.error);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error.response);
+      // Handle errors
+      if (error.response && error.response.status === 400) {
+        const errorMessage = error.response.data.error;
+        setLoading(false);
+        setMessgesModalVisible(true);
+        setMessges(errorMessage);
+        // Show the error message to the user
+      } else {
+        // Handle other errors (network issues, server errors, etc.)
+        console.error("An error occurred:", error.message);
+        alert("An error occurred while checking room availability.");
+        setLoading(false);
+      }
+    }
+  };
+  useEffect(() => {
+    document.body.style.overflow = booknowVisible ? "hidden" : "auto";
+    return () => {
+      // Cleanup overflow style on modal close
+      document.body.style.overflow = "auto";
+    };
+  }, [booknowVisible]);
 
   return (
-    <div className="flex items-center flex-col">
+    <div className="flex relative items-center flex-col">
       <div className="w-full md:h-[80vh] h-[50vh] relative">
         <video
           src={roomVideo}
@@ -71,7 +161,7 @@ const Room = () => {
                     : "flex lg:flex-row flex-col my-14 w-full gap-10 items-center"
                 }`}
               >
-                <div className="h-[50vh] lg:w-[50%] w-full overflow-hidden">
+                <div className="xl:h-[50vh] md:h-[30vh] lg:w-[50%] w-full overflow-hidden">
                   <img
                     src={`${import.meta.env.VITE_BASE_URL}${
                       data.images[0]?.room_image
@@ -85,18 +175,61 @@ const Room = () => {
                   <p className="tracking-wide leading-7">
                     {data.room_description}
                   </p>
-                  <div>
+                  <div className="flex items-center gap-4">
                     <Link
                       to={`/room/room-details/${data.room_type}`}
                       className="text-textColor flex items-start py-3 underline font-medium rounded-lg"
                     >
                       Discover More
                     </Link>
+                    <button
+                      onClick={() => {
+                        setBookNowVisible(true);
+                        setRomId(data.id);
+                      }}
+                      className="text-textColor flex items-start py-3 underline font-medium rounded-lg"
+                    >
+                      Book Now
+                    </button>
                   </div>
                 </div>
               </div>
             ))}
       </div>
+      {booknowVisible && (
+        <>
+          {/* Overlay */}
+          <div className="fixed inset-0 bg-slate-800 opacity-80 z-40"></div>
+
+          {/* Modal */}
+          <div className=" duration-500 ease-in-out transition-transform shadow-custom xl:w-[61%] md:w-[95%] overflow-hidden w-full fixed md:h-auto h-screen z-50 xl:top-16 md:top-28 top-0 left-1/2 -translate-x-1/2 border bg-white  border-[#795f9e] md:px-6 md:py-5 pl-3 pr-3 md:rounded-lg ">
+            <div className="pb-4 flex items-center justify-between">
+              <h1 className="text-2xl font-medium">Choose dates</h1>
+              <button onClick={() => setBookNowVisible(false)}>
+                <IoCloseSharp size={30} />
+              </button>
+            </div>
+
+            <div className="flex  flex-row md:gap-3 gap-4 items-center justify-center">
+              <BookNowDateCheacking />
+            </div>
+
+            <div className="float-right my-3 md:w-auto w-full">
+              <button
+                onClick={handleSearch}
+                className="bg-textColor md:w-auto w-full py-3 px-10 text-white rounded-full"
+              >
+                Book
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+      <MessagesModal
+        setMessgesModalVisible={setMessgesModalVisible}
+        messagesmodalVisible={messagesmodalVisible}
+        data={messges}
+      />
     </div>
   );
 };

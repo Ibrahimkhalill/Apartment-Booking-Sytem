@@ -7,7 +7,8 @@ import { RiMapPin2Fill } from "react-icons/ri";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { RiCloseLargeFill } from "react-icons/ri";
 import CustomBookingDatePicker from "../component/CustomBookingDatePicker";
-
+import { LuCalendarX2 } from "react-icons/lu";
+import { IoCloseSharp } from "react-icons/io5";
 import axiosInstance from "../component/axioxinstance";
 import { useDispatch, useSelector } from "react-redux";
 import { handleSetData } from "../component/Cookies";
@@ -18,6 +19,7 @@ import {
   setRooms,
 } from "../component/bookingSlice";
 import dayjs from "dayjs";
+import BookNowDateCheacking from "../component/BookNowDateCheacking";
 const AvilableRoom = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [mapModalVisible, setMapModalVisible] = useState(false);
@@ -27,16 +29,17 @@ const AvilableRoom = () => {
   const checkInDate = useSelector((state) => state.booking.checkInDate);
   const checkOutDate = useSelector((state) => state.booking.checkOutDate);
   const rooms = useSelector((state) => state.booking.rooms);
-  const [loading, setLoaing] = useState(false);
+  const totalAdults = rooms?.reduce((sum, room) => sum + room.adults, 0);
+  const [loading, setLoading] = useState(false);
   const location = useLocation();
-  const { data, adults } = location.state || {};
+  const { data } = location.state || {};
   const hasQueryParams = new URLSearchParams(location.search);
   const [messagesmodalVisible, setMessgesModalVisible] = useState(false);
   const [messges, setMessges] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const modalRef = useRef(null);
-
+  const [booknowVisible, setBookNowVisible] = useState(false);
   const roomsParam = hasQueryParams.get("rooms");
 
   useEffect(() => {
@@ -51,10 +54,10 @@ const AvilableRoom = () => {
   }, []); // Add dependencies to ensure proper re-execution
 
   useEffect(() => {
-    if (checkInDate && checkOutDate) {
+    if (!data && checkInDate && checkOutDate) {
       handleSearch();
     }
-  }, []);
+  }, [checkInDate, checkOutDate, data]);
 
   useEffect(() => {
     document.body.style.overflow = searchVisible ? "hidden" : "auto";
@@ -64,9 +67,19 @@ const AvilableRoom = () => {
     };
   }, [searchVisible]);
 
+  const queryParams = {
+    placeId: "ChIJgWsCh7C4VTcRwgRZ3btjpY8",
+    checkInDate: checkInDate?.format("YYYY-MM-DD"),
+    checkOutDate: checkOutDate?.format("YYYY-MM-DD"),
+    room: rooms.length,
+    adults: totalAdults,
+    rooms: JSON.stringify(rooms),
+  };
+  const queryString = new URLSearchParams(queryParams).toString();
+
   const handleSearch = async () => {
     try {
-      setLoaing(true);
+      setLoading(true);
       const response = await axiosInstance.post("/api/search/available/room/", {
         checkInDate: checkInDate?.format("YYYY-MM-DD"),
         checkOutDate: checkOutDate?.format("YYYY-MM-DD"),
@@ -76,11 +89,28 @@ const AvilableRoom = () => {
 
       if (response.status === 200) {
         setRoomData(response.data);
+        navigate(`/available_room?${queryString}`, {
+          state: {
+            data: response.data,
+            adults: totalAdults,
+          },
+        });
         handleSetData({ checkInDate, checkOutDate, rooms });
-        setLoaing(false);
+        setLoading(false);
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      if (error.response && error.response.status === 400) {
+        const errorMessage = error.response.data.error;
+        setLoading(false);
+        setMessges(errorMessage);
+        handleSetData({ checkInDate, checkOutDate, rooms });
+        // Show the error message to the user
+      } else {
+        // Handle other errors (network issues, server errors, etc.)
+        console.error("An error occurred:", error.message);
+        alert("An error occurred while checking room availability.");
+        setLoading(false);
+      }
     }
   };
 
@@ -90,7 +120,7 @@ const AvilableRoom = () => {
         check_in: checkInDate?.format("YYYY-MM-DD"),
         check_out: checkOutDate?.format("YYYY-MM-DD"),
         room_quantity: rooms.length,
-        adults: adults,
+        adults: totalAdults,
         room: item.id,
       }); // Replace with your API endpoint
 
@@ -102,7 +132,7 @@ const AvilableRoom = () => {
         navigate(`/checkout?${queryString}`, {
           state: {
             data: item,
-            adults: adults,
+            adults: totalAdults,
             uuid: response.data.uuid,
           },
         });
@@ -114,16 +144,22 @@ const AvilableRoom = () => {
       console.error("Error booking room:", error);
     }
   };
-
+  useEffect(() => {
+    document.body.style.overflow = booknowVisible ? "hidden" : "auto";
+    return () => {
+      // Cleanup overflow style on modal close
+      document.body.style.overflow = "auto";
+    };
+  }, [booknowVisible]);
   return (
     <div className="lg:container lg:m-auto flex flex-col items-center justify-center lg:max-w-[90%] xl:max-w-[100%] max-w-full pb-4">
-      <div className="lg:bg-[#fff] rounded px-4 md:border md:shadow-md flex items-center justify-center lg:w-[80%] 2xl:w-[74%] w-full">
+      <div className="lg:bg-[#fff] rounded px-4 md:border md:shadow-md flex items-center justify-center lg:w-[95%] 2xl:w-[74%] w-full">
         <div
           className="px-10 py-4 border text-sm rounded-3xl border-textColor text-gray-500 sm:hidden block font-medium"
           onClick={() => setSearchVisible(!searchVisible)}
         >
           {checkInDate?.format("DD MMM")} - {checkOutDate?.format("DD MMM")} |{" "}
-          {rooms.length} rooms , {adults} Adults
+          {rooms.length} rooms , {totalAdults} Adults
         </div>
         {/* mobileview */}
 
@@ -149,7 +185,7 @@ const AvilableRoom = () => {
           </div>
         </div>
       </div>
-      <div className="lg:w-[80%] 2xl:w-[74%]   flex lg:flex-row flex-col items-start justify-center gap-2">
+      <div className="lg:w-[95%] 2xl:w-[74%]   flex lg:flex-row flex-col items-start justify-center gap-2">
         <div className="lg:w-[26%] w-full flex flex-col">
           <div className="w-full border flex flex-col  mt-4 rounded">
             <img src="/images/banner2.jpg" alt="" className="rounded" />
@@ -184,77 +220,102 @@ const AvilableRoom = () => {
             </div>
           </div>
         </div>
-        <div className=" lg:w-[75%] w-full lg:flex md:grid grid-cols-2 flex-col  gap-5 py-4 lg:px-0 px-2">
-          {roomData &&
-            roomData.map((data, index) => (
-              <div
-                key={index}
-                className="border w-full rounded-md shadow flex lg:flex-row flex-col px-3 py-3 gap-5 "
+        {messges ? (
+          <div className="lg:w-[75%] w-full mt-5">
+            <div className="border w-full h-[300px] flex items-center justify-center flex-col gap-3">
+              <LuCalendarX2 size={60} className="text-red-700" />
+              <h1 className="text-lg font-semibold">
+                There are no available rooms for these dates.
+              </h1>
+              <h2>
+                We recommend changing dates or decrease room when available
+              </h2>
+              <button
+                onClick={() => setBookNowVisible(true)}
+                className="bg-textColor px-4 py-2 text-white rounded-full text-xs uppercase font-medium"
               >
-                <div className="lg:w-[40%] w-full">
-                  <img
-                    src={`http://127.0.0.1:8000${data.images[0]?.room_image}`} // Ensure this URL is correct
-                    alt="" // Consider adding a descriptive alt text for accessibility
-                    className="rounded w-full h-[230px]" // Tailwind CSS classes for styling
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2 ">
-                  <h3 className="text-lg font-semibold">{data.room_type}</h3>
-                  <div className="flex flex-wrap gap-3">
-                    <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
-                      max. guests : {data.room_people} adults
-                    </p>
-                    <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
-                      bed type : 2 double or 1 king
-                    </p>
-                    <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
-                      size : 28 m²
-                    </p>
+                Change Dates
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className=" lg:w-[75%] w-full lg:flex md:grid grid-cols-2 flex-col  gap-5 py-4 lg:px-0 px-2">
+            {roomData &&
+              roomData.map((data, index) => (
+                <div
+                  key={index}
+                  className="border w-full rounded-md shadow flex lg:flex-row flex-col px-3 py-3 gap-5 "
+                >
+                  <div className="lg:w-[40%] w-full">
+                    <img
+                      src={`http://127.0.0.1:8000${data.images[0]?.room_image}`} // Ensure this URL is correct
+                      alt="" // Consider adding a descriptive alt text for accessibility
+                      className="rounded w-full h-[230px]" // Tailwind CSS classes for styling
+                    />
                   </div>
 
-                  <div className="flex gap-4 items-center mt-2">
-                    {data.features?.slice(0, 3).map((feature, index) => (
-                      <div key={feature.id} className="flex gap-5">
-                        <img
-                          src={`http://127.0.0.1:8000${feature.feature_images}`}
-                          alt=""
-                          width={25}
-                        />
-                        {index !== 2 && (
-                          <div className="border-l-2 border-gray-400 h-6 "></div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="text-[#882121] flex items-center gap-1 mt-1">
-                    <button
-                      className="uppercase font-semibold text-sm"
-                      onClick={() => {
-                        setModalVisible(!modalVisible);
-                        setRoomDeatils(data);
-                      }}
-                    >
-                      Room Details
-                    </button>
-                    <IoIosArrowRoundForward size={18} />
-                  </div>
-                  <div className="w-full flex items-start lg:items-end lg:justify-end  flex-col gap-2">
-                    <p className="font-semibold">
-                      {data.price} BDT /
-                      <span className="text-sm text-gray-500">night</span>
-                    </p>
-                    <button
-                      onClick={() => handlePrebooked(data)}
-                      className=" w-full lg:w-auto bg-[#795f9e] text-white px-10 py-1 rounded-xl text-lg"
-                    >
-                      Book Now
-                    </button>
+                  <div className="flex flex-col gap-2 ">
+                    <h3 className="text-lg font-semibold">{data.room_type}</h3>
+                    <div className="flex flex-wrap gap-3">
+                      <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
+                        max. guests : {data.room_people} adults
+                      </p>
+                      <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
+                        bed type : 2 double or 1 king
+                      </p>
+                      <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
+                        size : 28 m²
+                      </p>
+                    </div>
+
+                    <div className="flex gap-4 items-center mt-2">
+                      {data.features?.slice(0, 3).map((feature, index) => (
+                        <div key={feature.id} className="flex gap-5">
+                          <img
+                            src={`${import.meta.env.VITE_BASE_URL}${
+                              feature.feature_images
+                            }`}
+                            alt=""
+                            width={25}
+                          />
+                          {index !== 2 && (
+                            <div className="border-l-2 border-gray-400 h-6 "></div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-sm text-red-600">
+                      Avaibale Room : {data.available_quantity}{" "}
+                    </div>
+                    <div className="text-[#882121] flex items-center gap-1 mt-1">
+                      <button
+                        className="uppercase font-semibold text-sm"
+                        onClick={() => {
+                          setModalVisible(!modalVisible);
+                          setRoomDeatils(data);
+                        }}
+                      >
+                        Room Details
+                      </button>
+                      <IoIosArrowRoundForward size={18} />
+                    </div>
+                    <div className="w-full flex items-start lg:items-end lg:justify-end  flex-col gap-2">
+                      <p className="font-semibold">
+                        {data.price} BDT /
+                        <span className="text-sm text-gray-500">night</span>
+                      </p>
+                      <button
+                        onClick={() => handlePrebooked(data)}
+                        className=" w-full lg:w-auto bg-[#795f9e] text-white px-10 py-1 rounded-xl text-lg"
+                      >
+                        Book Now
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-        </div>
+              ))}
+          </div>
+        )}
       </div>
 
       <ModalRoom
@@ -301,6 +362,35 @@ const AvilableRoom = () => {
             </button>
           </div>
         </div>
+      )}
+      {booknowVisible && (
+        <>
+          {/* Overlay */}
+          <div className="fixed inset-0 bg-slate-800 opacity-80 z-40"></div>
+
+          {/* Modal */}
+          <div className=" duration-500 ease-in-out transition-transform shadow-custom xl:w-[61%] md:w-[95%] overflow-hidden w-full fixed md:h-auto h-screen z-50 xl:top-16 md:top-28 top-0 left-1/2 -translate-x-1/2 border bg-white  border-[#795f9e] md:px-6 md:py-5 pl-3 pr-3 md:rounded-lg ">
+            <div className="pb-4 flex items-center justify-between">
+              <h1 className="text-2xl font-medium">Choose dates</h1>
+              <button onClick={() => setBookNowVisible(false)}>
+                <IoCloseSharp size={30} />
+              </button>
+            </div>
+
+            <div className="flex  flex-row md:gap-3 gap-4 items-center justify-center">
+              <BookNowDateCheacking />
+            </div>
+
+            <div className="float-right my-3 md:w-auto w-full">
+              <button
+                onClick={handleSearch}
+                className="bg-textColor md:w-auto w-full py-3 px-10 text-white rounded-full"
+              >
+                Book
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

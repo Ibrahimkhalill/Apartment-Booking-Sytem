@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MdOutlineViewCompactAlt } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,6 +9,29 @@ import LogoutModal from "./LogoutModal";
 const Sidebar = ({ children }) => {
   const username = useSelector((state) => state.authentication.username);
   const email = useSelector((state) => state.authentication.email);
+
+  const [dropdown, setDropDown] = useState(false);
+  const dropDownRef = useRef(null);
+  const buttonRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Check if the click is outside the dropdown
+      if (
+        dropDownRef.current &&
+        !dropDownRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setDropDown(false); // Close the dropdown
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const [isVisible, setIsVisible] = useState(false);
   const onClose = () => {
@@ -42,7 +65,7 @@ const Sidebar = ({ children }) => {
                   ></path>
                 </svg>
               </button>
-              <a href="https://flowbite.com" className="flex ms-2 md:me-24">
+              <Link to="/admin/dashboard" className="flex ms-2 md:me-24">
                 <img
                   src="https://flowbite.com/docs/images/logo.svg"
                   className="h-8 me-3"
@@ -51,16 +74,18 @@ const Sidebar = ({ children }) => {
                 <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
                   Basundara Apartment
                 </span>
-              </a>
+              </Link>
             </div>
             <div className="flex items-center">
-              <div className="flex items-center ms-3">
+              <div className="flex items-center ms-3 relative">
                 <div>
                   <button
                     type="button"
                     className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
                     aria-expanded="false"
                     data-dropdown-toggle="dropdown-user"
+                    onClick={() => setDropDown(!dropdown)}
+                    ref={buttonRef}
                   >
                     <span className="sr-only">Open user menu</span>
                     <img
@@ -70,49 +95,51 @@ const Sidebar = ({ children }) => {
                     />
                   </button>
                 </div>
-                <div
-                  className="z-50 hidden my-4 mr-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
-                  id="dropdown-user"
-                >
-                  <div className="px-4 py-3" role="none">
-                    <p
-                      className="text-sm text-gray-900 dark:text-white"
-                      role="none"
-                    >
-                      {username}
-                    </p>
-                    <p
-                      className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
-                      role="none"
-                    >
-                      {email}
-                    </p>
-                  </div>
-                  <ul
-                    className="py-1  px-2 flex justify-between w-full"
-                    role="none"
+                {dropdown && (
+                  <div
+                    ref={dropDownRef}
+                    className="z-50  absolute right-0 top-7 my-4 shadow-custom text-base list-none bg-white divide-y divide-gray-100 rounded  dark:bg-gray-700 dark:divide-gray-600"
                   >
-                    <li>
-                      <Link
-                        to="/admin/profile"
-                        className="block px-10 rounded bg-slate-600 border py-2 text-sm text-white  dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
+                    <div className="px-4 py-3" role="none">
+                      <p
+                        className="text-sm text-gray-900 dark:text-white"
+                        role="none"
                       >
-                        Profile
-                      </Link>
-                    </li>
+                        {username}
+                      </p>
+                      <p
+                        className="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
+                        role="none"
+                      >
+                        {email}
+                      </p>
+                    </div>
+                    <ul
+                      className="py-1  px-2 flex justify-between w-full"
+                      role="none"
+                    >
+                      <li>
+                        <Link
+                          to="/admin/profile"
+                          className="block px-10 rounded bg-slate-600 border py-2 text-sm text-white  dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                          role="menuitem"
+                        >
+                          Profile
+                        </Link>
+                      </li>
 
-                    <li>
-                      <button
-                        className="block px-4 py-2 text-sm border rounded bg-textColor text-white   dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                        role="menuitem"
-                        onClick={() => setIsVisible(!isVisible)}
-                      >
-                        Logout
-                      </button>
-                    </li>
-                  </ul>
-                </div>
+                      <li>
+                        <button
+                          className="block px-4 py-2 text-sm border rounded bg-textColor text-white   dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                          role="menuitem"
+                          onClick={() => setIsVisible(!isVisible)}
+                        >
+                          Logout
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -207,6 +234,57 @@ const Sidebar = ({ children }) => {
               >
                 <MdOutlineViewCompactAlt size={24} className="text-gray-500" />
                 <span className="ms-3">View Room</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/admin/add/display-slider"
+                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white  dark:hover:bg-gray-700 group"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="#000000"
+                  version="1.1"
+                  id="Layer_1"
+                  viewBox="0 0 218.207 218.207"
+                  xmlSpace="preserve"
+                  className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                >
+                  <g>
+                    <g>
+                      <g>
+                        <path d="M214.31,27.276H3.897C1.743,27.276,0,29.019,0,31.172v27.276v77.931v50.655c0,2.154,1.743,3.897,3.897,3.897H214.31     c2.154,0,3.897-1.743,3.897-3.897v-50.655V58.448V31.172C218.207,29.019,216.464,27.276,214.31,27.276z M7.793,62.345h35.069     v70.138H7.793V62.345z M210.414,132.483h-11.69V62.345h11.69V132.483z M210.414,54.552h-15.586c-2.154,0-3.897,1.743-3.897,3.897     v77.931c0,2.154,1.743,3.897,3.897,3.897h15.586v42.862H7.793v-0.001v-42.862h38.966c2.154,0,3.897-1.743,3.897-3.897V58.448     c0-2.154-1.743-3.897-3.897-3.897H7.793V35.069h202.621V54.552z" />
+                        <circle cx="113" cy="163.655" r="7.793" />
+                        <path d="M66.241,140.277h109.103c2.154,0,3.897-1.743,3.897-3.897V58.448c0-2.153-1.743-3.896-3.896-3.896H66.241     c-2.154,0-3.897,1.743-3.897,3.897v77.931C62.344,138.534,64.087,140.277,66.241,140.277z M70.138,62.345h101.31v70.138H70.138     V62.345z" />
+                        <rect
+                          x="66.241"
+                          y="159.759"
+                          width="11.69"
+                          height="7.793"
+                        />
+                        <rect
+                          x="85.724"
+                          y="159.759"
+                          width="11.69"
+                          height="7.793"
+                        />
+                        <rect
+                          x="128.586"
+                          y="159.759"
+                          width="11.69"
+                          height="7.793"
+                        />
+                        <rect
+                          x="148.069"
+                          y="159.759"
+                          width="11.69"
+                          height="7.793"
+                        />
+                      </g>
+                    </g>
+                  </g>
+                </svg>
+                <span className="ms-3">Add Display Slider</span>
               </Link>
             </li>
           </ul>

@@ -11,8 +11,9 @@ const ViewRoom = () => {
   const [data, setData] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [reservationDeatils, setReservationDetails] = useState({});
-  const [is_check_in, setIsCheckIn] = useState(false);
-  const [is_check_out, setIsCheckOut] = useState(false);
+  const [roomFeature, setRoomFeature] = useState([]);
+  const [roomImage, setRoomImage] = useState([]);
+  const [roomId, setRoomId] = useState(null);
   const navigate = useNavigate();
   const fetchdata = async () => {
     try {
@@ -33,7 +34,6 @@ const ViewRoom = () => {
   useEffect(() => {
     fetchdata();
   }, []);
-  console.log(data);
 
   // Handle viewing reservation details
   const handleviewDeatils = (item) => {
@@ -43,38 +43,102 @@ const ViewRoom = () => {
     ) {
       // If currently viewing the same reservation, clear it
       setReservationDetails({});
+      setRoomFeature([]);
+      setRoomImage([]);
+      setRoomId(null);
     } else {
       // Otherwise, set the selected reservation details
       setReservationDetails(item);
+      setRoomFeature(item.features);
+      setRoomImage(item.images);
+      setRoomId(item.id);
     }
   };
 
-  const updateReservation = async (reservationId) => {
+  const handleDeleteRoom = async (featureId) => {
+    const confirmation = window.confirm("Are you sure delete this row");
+    if (!confirmation) {
+      return;
+    }
     try {
-      const response = await axiosInstance.put(
-        `/api/upadte_reservation/${reservationId}/`,
-        {
-          is_check_in: is_check_in,
-          is_check_out: is_check_out,
-        }
+      const response = await axiosInstance.delete(
+        `/api/delete/room/${featureId}/`
       );
 
       // Handle the response from the server
       if (response.status === 200) {
         fetchdata();
-        alert("Reservation updated successfully:", response.data.message);
+        setReservationDetails({});
+        alert(response.data.message);
       }
     } catch (error) {
       // Handle errors
-      if (error.response) {
-        console.error("Error updating reservation:", error.response.data.error);
-        alert(error.response.data.error); // Show an alert for the error
-      } else {
-        console.error("Error updating reservation:", error.message);
-        alert("An error occurred while updating the reservation.");
-      }
+
+      console.error("Error updating featureName:", error.message);
+      alert("An error occurred while delete the displayslider.");
     }
   };
+
+  const handleDeleteRoomFeature = async (roomId, featureId) => {
+    const confirmation = window.confirm(
+      "Are you sure you want to delete this Image?"
+    );
+    if (!confirmation) {
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.delete(
+        `/api/delete/room/${roomId}/feature/${featureId}/`
+      );
+
+      // Handle the response from the server
+      if (response.status === 200) {
+        // Filter out the deleted feature from the features list
+        const updatedFeatures = roomFeature?.filter(
+          (item) => item.id != featureId // Only keep features that are not the deleted one
+        );
+        // Update state with the new features list
+        setRoomFeature(updatedFeatures);
+        alert(response.data.message); // Show success message
+      }
+    } catch (error) {
+      // Handle errors
+      console.error("Error deleting feature:", error.message);
+      alert("An error occurred while deleting the feature.");
+    }
+  };
+
+  const handleDeleteRoomImage = async (image_id) => {
+    const confirmation = window.confirm(
+      "Are you sure you want to delete this feature?"
+    );
+    if (!confirmation) {
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.delete(
+        `/api/delete/room/image/${image_id}/`
+      );
+
+      // Handle the response from the server
+      if (response.status === 200) {
+        // Filter out the deleted feature from the features list
+        const updatedImages = reservationDeatils.images?.filter(
+          (item) => item.id != image_id // Only keep features that are not the deleted one
+        );
+        // Update state with the new features list
+        setRoomImage(updatedImages);
+        alert(response.data.message); // Show success message
+      }
+    } catch (error) {
+      // Handle errors
+      console.error("Error deleting feature:", error.message);
+      alert("An error occurred while deleting the feature.");
+    }
+  };
+  console.log("reservationDeatils", reservationDeatils, roomFeature);
 
   const handleSearch = (e) => {
     const searchValue = e.target.value.toLowerCase(); // Convert the input to lowercase
@@ -107,8 +171,6 @@ const ViewRoom = () => {
                 className="bg-textColor px-5 py-1 text-white rounded"
                 onClick={() => {
                   setReservationDetails({});
-                  setIsCheckIn(false);
-                  setIsCheckOut(false);
                 }} // Reset details on back button click
               >
                 Back
@@ -200,6 +262,9 @@ const ViewRoom = () => {
                           <button
                             className="font-medium ml-4 text-blue-600 dark:text-blue-500 hover:underline h-8"
                             title="Edit"
+                            onClick={() =>
+                              handleNevigate(reservationDeatils.id)
+                            }
                           >
                             <img
                               src="https://cdn-icons-png.flaticon.com/128/6218/6218938.png"
@@ -208,6 +273,9 @@ const ViewRoom = () => {
                             />
                           </button>
                           <button
+                            onClick={() =>
+                              handleDeleteRoom(reservationDeatils.id)
+                            }
                             title="Delete"
                             className="font-medium ml-4 text-blue-600 dark:text-blue-500 hover:underline h-[30px]"
                           >
@@ -242,9 +310,8 @@ const ViewRoom = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {reservationDeatils.features?.map((item, index) => (
+                        {roomFeature?.map((item, index) => (
                           <tr
-                            onClick={() => handleviewDeatils(item)} // Corrected event handler
                             key={index}
                             className="bg-white border-b cursor-pointer dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                           >
@@ -261,7 +328,15 @@ const ViewRoom = () => {
                             </td>
 
                             <td className="px-2 py-4 ">
-                              <button className="font-medium ml-4 text-blue-600 dark:text-blue-500 hover:underline h-9">
+                              <button
+                                onClick={() =>
+                                  handleDeleteRoomFeature(
+                                    reservationDeatils.id,
+                                    item.id
+                                  )
+                                }
+                                className="font-medium ml-4 text-blue-600 dark:text-blue-500 hover:underline h-9"
+                              >
                                 <img
                                   src="https://cdn-icons-png.freepik.com/256/4980/4980658.png?ga=GA1.1.590555594.1724764416&semt=ais_hybrid"
                                   alt=""
@@ -293,9 +368,8 @@ const ViewRoom = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {reservationDeatils.images?.map((item, index) => (
+                        {roomImage.map((item, index) => (
                           <tr
-                            onClick={() => handleviewDeatils(item)} // Corrected event handler
                             key={index}
                             className="bg-white border-b cursor-pointer dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
                           >
@@ -314,7 +388,10 @@ const ViewRoom = () => {
                             </td>
 
                             <td className=" px-3 py-4 text-center">
-                              <button className=" font-medium ml-4 text-blue-600 dark:text-blue-500 hover:underline h-9">
+                              <button
+                                onClick={() => handleDeleteRoomImage(item.id)}
+                                className=" font-medium ml-4 text-blue-600 dark:text-blue-500 hover:underline h-9"
+                              >
                                 <img
                                   src="https://cdn-icons-png.freepik.com/256/4980/4980658.png?ga=GA1.1.590555594.1724764416&semt=ais_hybrid"
                                   alt=""
@@ -376,7 +453,11 @@ const ViewRoom = () => {
                     <tr
                       onClick={() => handleviewDeatils(item)} // Corrected event handler
                       key={index}
-                      className="bg-white border-b cursor-pointer dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                      className={`${
+                        roomId === item.id
+                          ? "bg-textColor text-white"
+                          : "bg-white"
+                      }  border-b cursor-pointer dark:bg-gray-800 dark:border-gray-700 hover:bg-textColor hover:text-white dark:hover:bg-gray-600`}
                     >
                       <td className="px-6 py-4">{index + 1}</td>
                       <td className="px-6 py-4">{item.room_no}</td>
@@ -390,20 +471,10 @@ const ViewRoom = () => {
                         <button
                           className="font-medium ml-4 text-blue-600 dark:text-blue-500 hover:underline h-8"
                           title="Edit"
-                          onClick={()=>handleNevigate(item.id)}
+                          onClick={() => handleNevigate(item.id)}
                         >
                           <img
                             src="https://cdn-icons-png.flaticon.com/128/6218/6218938.png"
-                            alt=""
-                            className="h-full"
-                          />
-                        </button>
-                        <button
-                          title="Delete"
-                          className="font-medium ml-4 text-blue-600 dark:text-blue-500 hover:underline h-[30px]"
-                        >
-                          <img
-                            src="https://cdn-icons-png.freepik.com/256/4980/4980658.png?ga=GA1.1.590555594.1724764416&semt=ais_hybrid"
                             alt=""
                             className="h-full"
                           />

@@ -7,14 +7,16 @@ import { RiCloseLargeFill } from "react-icons/ri";
 import axiosInstance from "../component/axioxinstance";
 import { useSelector } from "react-redux";
 import { handleSetData } from "../component/Cookies";
+
 function Home() {
   const checkInDate = useSelector((state) => state.booking.checkInDate);
   const checkOutDate = useSelector((state) => state.booking.checkOutDate);
   const rooms = useSelector((state) => state.booking.rooms);
   const totalAdults = rooms?.reduce((sum, room) => sum + room.adults, 0);
   const [searchVisible, setSearchVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
 
-  const [loading, setLoaing] = useState(false);
   const navigate = useNavigate();
 
   const queryParams = {
@@ -29,7 +31,7 @@ function Home() {
 
   const handleSearch = async () => {
     try {
-      setLoaing(true);
+      setLoading(true);
       const response = await axiosInstance.post("/api/search/available/room/", {
         checkInDate: checkInDate?.format("YYYY-MM-DD"),
         checkOutDate: checkOutDate?.format("YYYY-MM-DD"),
@@ -45,10 +47,19 @@ function Home() {
           },
         });
         handleSetData({ checkInDate, checkOutDate, rooms });
-        setLoaing(false);
+        setLoading(false);
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      if (error.response && error.response.status === 400) {
+        setLoading(false);
+        navigate(`/available_room?${queryString}`);
+        handleSetData({ checkInDate, checkOutDate, rooms });
+        // Show the error message to the user
+      } else {
+        console.error("An error occurred:", error.message);
+        alert("An error occurred while checking room availability.");
+        setLoading(false);
+      }
     }
   };
   const location = useLocation();
@@ -74,6 +85,20 @@ function Home() {
       }
     };
     fetchData();
+  }, []);
+  const fetchDisplaySlider = async () => {
+    try {
+      const response = await axiosInstance.get("/api/get/display-slider/");
+      if (response.status === 200) {
+        setData(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDisplaySlider();
   }, []);
 
   return (
@@ -120,7 +145,7 @@ function Home() {
           </div>
         </div>
         <div className="w-full relative ">
-          <Carousel />
+          <Carousel data={data} />
         </div>
         <div className="flex md:flex-row flex-col items-center w-full px-5 mt-10 gap-5">
           <div className="bg-slate-800 md:w-[60%] md:h-[50vh] flex flex-col md:gap-7 gap-4 md:items-start items-center justify-center px-5 py-4">
@@ -150,10 +175,12 @@ function Home() {
           </div>
         </div>
         <div className="w-full py-10 px-5 ">
-          <h1 className="md:text-4xl text-2xl font-semibold text-center border-b pb-5">Our Gallery</h1>
+          <h1 className="md:text-4xl text-2xl font-semibold text-center border-b pb-5">
+            Our Gallery
+          </h1>
 
           <div className="grid xl:grid-cols-4 sm:grid-cols-2 lg:grid-cols-3 gap-2 py-5 ">
-            {images.slice(0,8).map((data, index) => (
+            {images.slice(0, 8).map((data, index) => (
               <div key={index} className="h-[300px] overflow-hidden">
                 <img
                   src={`http://127.0.0.1:8000${data.room_image}`}
