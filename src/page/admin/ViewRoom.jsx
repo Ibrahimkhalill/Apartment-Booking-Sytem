@@ -412,6 +412,14 @@ const ViewRoom = () => {
                   </div>
                   <div></div>
                 </div>
+
+                <div className=" w-full flex flex-col gap-2">
+                  <h2 className="font-medium">Room Address</h2>
+                  <div className="border w-full py-4 px-5 rounded shadow-small">
+                    {reservationDeatils.room_address}
+                  </div>
+                  <div></div>
+                </div>
               </div>
             </>
           ) : (

@@ -289,6 +289,7 @@ const RoomDeatils = () => {
             referrerPolicy="no-referrer-when-downgrade"
           ></iframe>
         </div>
+        
       </div>
       {searchVisible && (
         <div className=" zoom-in fixed z-50 top-0 left-0 px-5 w-full h-screen bg-[#263341] flex flex-col items-center justify-between py-10">

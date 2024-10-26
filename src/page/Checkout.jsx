@@ -168,7 +168,6 @@ const Checkout = () => {
 
   const isValidPhoneNumber = (phone) => {
     if (code == "880") {
-
       // If the country code is Bangladesh
       const localPhone = !phone.startsWith("0") ? "0" + phone : phone;
       setPhoneNumber(localPhone);
@@ -185,7 +184,7 @@ const Checkout = () => {
     let hasError = false;
 
     // Check if all required fields are present
-    if ( !first_name || !lastName || !email || !address || !phone) {
+    if (!first_name || !lastName || !email || !address || !phone) {
       setError(true);
       hasError = true;
     }
@@ -267,7 +266,6 @@ const Checkout = () => {
       const response = await axiosInstance.get(
         `/api/get_booking/${prebookingId}/`
       ); // Fetch booking data
-  
 
       if (response.status === 200) {
         const remainingTime = response.data.remaining_time; // Get remaining time
@@ -366,9 +364,7 @@ const Checkout = () => {
               <h3 className="text-lg font-semibold">
                 Basundara Apartment, Dhaka
               </h3>
-              <p className=" text-sm">
-                Airport Rd, Dhaka Cantonment, Dhaka, 1206, Bangladesh
-              </p>
+              <p className=" text-sm">{data.booking?.room_id?.room_address}</p>
               <p className=" w-full flex items-center text-sm text-[#1b5a20] font-medium">
                 This property is in a good location
               </p>
@@ -384,7 +380,7 @@ const Checkout = () => {
             </div>
             <div className="px-3 py-2 text-sm flex flex-col gap-2">
               <h1 className="text-black font-bold">Room Type:</h1>
-              {data.booking?.room_id?.room_type} 
+              {data.booking?.room_id?.room_type}
             </div>
             <div className="px-3 py-2 text-sm flex flex-col gap-2">
               <div>
@@ -418,9 +414,12 @@ const Checkout = () => {
                 <span className="">{rooms.length} rooms</span>
                 <p> x{rooms.length}</p>
               </div>
-              <div className="flex items-center justify-between border-t py-2">
+              <div className="flex items-start justify-between border-t py-2">
                 <span className="font-bold">Total Price:</span>
-                <p className="font-bold">BDT {amount}</p>
+                <p className="font-bold text-end">
+                  BDT {amount} <br />
+                  US$ {Math.round(amount * 0.008368)}
+                </p>
               </div>
             </div>
           </div>

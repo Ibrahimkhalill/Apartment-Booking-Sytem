@@ -34,7 +34,6 @@ const CustomModalRoom = ({ modalVisible, setModalVisible, data, modalRef }) => {
     };
   }, [modalVisible]);
 
-
   useEffect(() => {
     // Function to handle click outside
     const handleClickOutside = (event) => {
@@ -44,11 +43,11 @@ const CustomModalRoom = ({ modalVisible, setModalVisible, data, modalRef }) => {
     };
 
     // Add event listener
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
 
     // Cleanup event listener
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [modalRef]);
 
@@ -61,7 +60,9 @@ const CustomModalRoom = ({ modalVisible, setModalVisible, data, modalRef }) => {
         <div
           ref={modalRef}
           className={`${
-            !animation ? "MessagesModalAnimationDown" : "MessagesModalAnimationUp"
+            !animation
+              ? "MessagesModalAnimationDown"
+              : "MessagesModalAnimationUp"
           }  relative bg-white md:rounded-lg lg:pl-10 lg:px-2 lg:py-10 z-50 w-full lg:w-[1000px] md:h-auto h-full overflow-y-auto`}
         >
           <div className="py-7 md:py-0 relative">
@@ -141,6 +142,10 @@ const CustomModalRoom = ({ modalVisible, setModalVisible, data, modalRef }) => {
                           <div className="h-10">{item?.feature_name}</div>
                         </div>
                       ))}
+                    </div>
+                    <div>
+                      <h2 className="font-medium text-[1.1rem]">Room Address</h2>
+                      <p>{data.room_address}</p>
                     </div>
                   </div>
                 </div>

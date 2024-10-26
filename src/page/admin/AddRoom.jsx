@@ -31,6 +31,7 @@ const AddRoom = () => {
     quantity: "",
     price: "",
     description: "",
+    room_address : ""
   });
   const [bedTypeModalVisible, setBedTypeModalVisible] = useState(false);
   const [roomSizeVisible, setRoomSizeVisible] = useState(false);
@@ -193,6 +194,8 @@ const AddRoom = () => {
       quantity: "",
       price: "",
       description: "",
+    room_address : ""
+
     });
     setChosenFeatures([]);
     setRows([{ image: "" }]);
@@ -226,6 +229,9 @@ const AddRoom = () => {
     }
     if (!data.description) {
       errors.description = "Description is required.";
+    }
+    if (!data.room_address) {
+      errors.room_address = "Room Address is required.";
     }
 
     // Check numeric values
@@ -276,6 +282,7 @@ const AddRoom = () => {
     formData.append("maxPeople", roomData.maxPeople);
     formData.append("quantity", roomData.quantity);
     formData.append("price", roomData.price);
+    formData.append("room_address", roomData.room_address);
     formData.append("description", roomData.description);
     formData.append("features", JSON.stringify(chosenFeatureIds));
 
@@ -510,6 +517,29 @@ const AddRoom = () => {
                 {formErrors.price && (
                   <div className="absolute md:top-10 top-16 md:mt-0 mt-1 text-xs text-red-700 md:left-32 md:ml-2">
                     {formErrors.price}
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-2 md:items-center relative md:flex-row flex-col w-full">
+                <label
+                  htmlFor="room_address"
+                  className="md:w-32 font-medium text-sm text-gray-700"
+                >
+                  Room Address
+                </label>
+                <input
+                  type="text"
+                  id="room_address"
+                  placeholder="write your room address"
+                  value={roomData.room_address}
+                  onChange={handleChange}
+                  className={`${
+                    formErrors.room_address ? "border-red-700" : "border-slate-300"
+                  }  rounded-md md:w-[30vw] w-full`}
+                />
+                {formErrors.room_address && (
+                  <div className="absolute md:top-10 top-16 md:mt-0 mt-1 text-xs text-red-700 md:left-32 md:ml-2">
+                    {formErrors.room_address}
                   </div>
                 )}
               </div>
