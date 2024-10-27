@@ -629,7 +629,7 @@ const AddRoom = () => {
             </div>
             <button
               onClick={() => setFeatureModalVisible(!featureModalVisible)}
-              className="bg-textColor absolute left-1/2 -translate-x-1/2 top-4  px-3 py-3 text-white   rounded flex items-center justify-center"
+              className="bg-textColor absolute  md:left-1/2 md:-translate-x-1/2 md:top-4 -top-8 left-32 px-3 py-3 text-white   rounded flex items-center justify-center"
             >
               <FaPlus size={14} />
             </button>

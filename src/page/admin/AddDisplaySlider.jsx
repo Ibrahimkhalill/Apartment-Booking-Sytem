@@ -217,13 +217,13 @@ const AddDisplaySlider = () => {
         <h3 className="text-center pb-2 font-medium text-2xl">
           Add Display Slider
         </h3>
-        <div className="border w-full h-[37vh] shadow-small px-2 py-3 flex flex-col gap-4   justify-center">
-          <div className="flex  gap-4 items-center  justify-center">
-            <div className="flex flex-col gap-5">
+        <div className="border w-full  shadow-small px-2 py-3 flex flex-col gap-4   justify-center">
+          <div className="flex md:flex-row flex-col gap-4 items-center  justify-center">
+            <div className="flex flex-col gap-5 w-full">
               <div className="flex gap-2 md:items-center relative md:flex-row flex-col w-full ">
                 <label
                   htmlFor="roomName"
-                  className="md:w-32 font-medium text-sm text-gray-700"
+                  className="md:w-32  font-medium text-sm text-gray-700"
                 >
                   Slider Title
                 </label>
@@ -305,7 +305,7 @@ const AddDisplaySlider = () => {
                 )}
               </div>
             </div>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 w-full">
               <div className="flex gap-2 md:items-center relative md:flex-row flex-col w-full ">
                 <label
                   htmlFor="roomName"
@@ -333,14 +333,14 @@ const AddDisplaySlider = () => {
                   </div>
                 )}
               </div>
-              <div className="flex mt-1">
+              <div className="flex md:flex-row flex-col mt-1 gap-2">
                 <label
                   htmlFor="roomName"
                   className="md:w-32 font-medium text-sm text-gray-700"
                 >
                   Image Preview
                 </label>
-                <div className="w-[20vw] h-[20vh] border ml-2 flex items-center justify-center">
+                <div className="md:w-[20vw] h-[20vh] border md:ml-2 flex items-center justify-center">
                   {imagePreviews ? (
                     <img
                       src={imagePreviews}
@@ -414,7 +414,7 @@ const AddDisplaySlider = () => {
                   >
                     <td className="px-6 py-4">{index + 1}</td>
                     <td className="px-6 py-4">{item.name}</td>
-                    <td className="px-6 py-4 w-[300px]">{item.description}</td>
+                    <td className="px-6 py-4 md:w-[300px]">{item.description}</td>
                     <td className="px-6 py-4">{item.button_name}</td>
 
                     <td className="px-6 py-4">
@@ -423,7 +423,7 @@ const AddDisplaySlider = () => {
                           item.slider_image
                         }`}
                         alt=""
-                        className="h-[100px] w-[200px] object-cover"
+                        className="md:h-[100px] h-[80px] w-[50px] md:w-[200px]  object-cover"
                       />
                     </td>
                     <td className=" py-4">

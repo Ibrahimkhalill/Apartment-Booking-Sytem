@@ -476,7 +476,7 @@ const CustomBookingDatePicker = ({ width }) => {
             )}
           </div>
           <div className="w-[4px] bg-slate-200 h-[10vh] md:block hidden"></div>
-          <div className="bg-white flex items-center relative  justify-between   w-full  md:px-0">
+          <div className="bg-white flex items-center relative  justify-between  px-2 w-full  md:px-0">
             <button
               className="flex  items-center justify-between xl:w-[18vw]  gap-2 w-full"
               ref={flag1Ref}

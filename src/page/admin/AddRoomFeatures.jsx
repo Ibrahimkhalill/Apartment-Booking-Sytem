@@ -200,9 +200,9 @@ const AddRoomFeatures = ({
         width={1000}
         footer
       >
-        <div className="w-full">
+        <div className="w-full px-2">
           <div className="border shadow-small rounded-md  w-full py-6 flex md:flex-row flex-col  md:items-center items-start justify-center gap-2 px-2">
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 md:w-auto w-full">
               <div className="flex gap-2 md:items-center justify-center relative md:flex-row flex-col  md:w-auto w-full">
                 <label
                   htmlFor="roomName"
@@ -268,14 +268,14 @@ const AddRoomFeatures = ({
                 </button>
               ) : (
                 <button
-                  className="bg-textColor  px-10 py-2 text-white rounded"
+                  className="bg-textColor md:w-auto px-10 py-2 text-white rounded"
                   onClick={handleSubmit}
                 >
                   Submit
                 </button>
               )}
             </div>
-            <div className="w-[15vw] h-[19.5vh] border ml-2 flex items-center justify-center">
+            <div className="md:w-[15vw] w-full  h-[19.5vh] border md:ml-2 px-2  md:flex items-center justify-center hidden">
               {imagePreviews ? (
                 <img
                   src={imagePreviews}
@@ -324,12 +324,12 @@ const AddRoomFeatures = ({
                     >
                       <td className="  px-6 py-3">{index + 1}</td>
                       <td className="  px-6 py-3">{item.feature_name}</td>
-                      <td className="md:px-6 py-4 md:h-20 h-[70px]  ">
+                      <td className=" px-6 py-4 md:h-20 h-[70px]  ">
                         <img
                           src={`${import.meta.env.VITE_BASE_URL}${
                             item.feature_images
                           }`}
-                          className="h-full md:w-auto w-full"
+                          className="h-full md:w-auto "
                           alt={item.feature_name}
                         ></img>
                       </td>

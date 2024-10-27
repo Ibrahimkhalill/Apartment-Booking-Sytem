@@ -7,8 +7,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { IoSearch } from "react-icons/io5";
 import { IoIosArrowRoundForward } from "react-icons/io";
-import { MdDateRange } from "react-icons/md";
-import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
+import { RiCloseLargeFill } from "react-icons/ri";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import LoadingCardRoom from "../../component/LoadingCardRoom";
@@ -284,6 +283,36 @@ const AddReservation = () => {
           </div>
         </div>
       </div>
+      {searchVisible && (
+        <div className="zoom-in fixed z-50 top-0 left-0 px-5 w-full h-screen bg-[#263341] flex flex-col items-center justify-between py-10">
+          <div className=" w-full flex items-end justify-end">
+            <RiCloseLargeFill
+              color="white"
+              size={30}
+              onClick={() => setSearchVisible(false)}
+            />
+          </div>
+          <div className="text-5xl text-white">Find your next experience</div>
+          <div className="py-5 lg:hidden block bg-white w-full  rounded-lg">
+            <div className="flex lg:flex-row flex-col gap-3 items-center justify-center  ">
+              <CustomBookingDatePicker hasuser={true} width="width" />
+            </div>
+          </div>
+          <div className=" mt-3 flex flex-col gap-3 w-[100%] lg:w-[20%]">
+            <div></div>
+            <button
+              className="bg-[#795f9e] uppercase text-white text-lg  w-full py-5 px-2 rounded-3xl"
+              type="submit"
+              onClick={() => {
+                handleSearch();
+                setSearchVisible(false);
+              }}
+            >
+              <span>Search</span>
+            </button>
+          </div>
+        </div>
+      )}
     </Sidebar>
   );
 };
