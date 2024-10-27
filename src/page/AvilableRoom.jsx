@@ -13,6 +13,8 @@ import axiosInstance from "../component/axioxinstance";
 import { useDispatch, useSelector } from "react-redux";
 import { handleSetData } from "../component/Cookies";
 import MessagesModal from "../component/MessagesModal";
+import map from "../assets/images/map.jpg";
+import banner from "../assets/images/banner2.jpg";
 import {
   setCheckInDate,
   setCheckOutDate,
@@ -20,6 +22,7 @@ import {
 } from "../component/bookingSlice";
 import dayjs from "dayjs";
 import BookNowDateCheacking from "../component/BookNowDateCheacking";
+import LoadingCardAvilableRoom from "../component/LoadingCardAvilableRoom";
 const AvilableRoom = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [mapModalVisible, setMapModalVisible] = useState(false);
@@ -31,6 +34,7 @@ const AvilableRoom = () => {
   const rooms = useSelector((state) => state.booking.rooms);
   const totalAdults = rooms?.reduce((sum, room) => sum + room.adults, 0);
   const [loading, setLoading] = useState(false);
+  const [loadingCard, setLoadingCard] = useState(false);
   const location = useLocation();
   const { data } = location.state || {};
   const hasQueryParams = new URLSearchParams(location.search);
@@ -80,6 +84,7 @@ const AvilableRoom = () => {
   const handleSearch = async () => {
     try {
       setLoading(true);
+      setLoadingCard(true);
       const response = await axiosInstance.post("/api/search/available/room/", {
         checkInDate: checkInDate?.format("YYYY-MM-DD"),
         checkOutDate: checkOutDate?.format("YYYY-MM-DD"),
@@ -97,11 +102,13 @@ const AvilableRoom = () => {
         });
         handleSetData({ checkInDate, checkOutDate, rooms });
         setLoading(false);
+        setLoadingCard(false);
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {
         const errorMessage = error.response.data.error;
         setLoading(false);
+        setLoadingCard(false);
         setMessges(errorMessage);
         handleSetData({ checkInDate, checkOutDate, rooms });
         // Show the error message to the user
@@ -110,6 +117,7 @@ const AvilableRoom = () => {
         console.error("An error occurred:", error.message);
         alert("An error occurred while checking room availability.");
         setLoading(false);
+        setLoadingCard(false);
       }
     }
   };
@@ -188,7 +196,7 @@ const AvilableRoom = () => {
       <div className="lg:w-[95%] 2xl:w-[74%]   flex lg:flex-row flex-col items-start justify-center gap-2">
         <div className="lg:w-[26%] w-full flex flex-col">
           <div className="w-full border flex flex-col  mt-4 rounded">
-            <img src="/images/banner2.jpg" alt="" className="rounded" />
+            <img src={banner} alt="" className="rounded" />
             <div className="px-2 py-3 flex flex-col gap-2 ">
               <h3 className="text-lg font-semibold">
                 Basundara Apartment, Dhaka
@@ -208,7 +216,7 @@ const AvilableRoom = () => {
             className="w-full border relative  mt-4 rounded cursor-pointer hidden lg:block"
             onClick={() => setMapModalVisible(!mapModalVisible)}
           >
-            <img src="/images/map.PNG" alt="" />
+            <img src={map} alt="" />
 
             <div className=" absolute top-1/2 left-1/2  -translate-x-1/2 -translate-y-1/2">
               <div className="flex flex-col items-center gap-2">
@@ -220,101 +228,116 @@ const AvilableRoom = () => {
             </div>
           </div>
         </div>
-        {messges ? (
-          <div className="lg:w-[75%] w-full mt-5">
-            <div className="border w-full h-[300px] flex items-center justify-center flex-col gap-3">
-              <LuCalendarX2 size={60} className="text-red-700" />
-              <h1 className="text-lg font-semibold">
-                There are no available rooms for these dates.
-              </h1>
-              <h2>
-                We recommend changing dates or decrease room when available
-              </h2>
-              <button
-                onClick={() => setBookNowVisible(true)}
-                className="bg-textColor px-4 py-2 text-white rounded-full text-xs uppercase font-medium"
-              >
-                Change Dates
-              </button>
-            </div>
+
+        {loadingCard ? (
+          <div className="lg:w-[75%] w-full lg:flex md:grid grid-cols-2 flex-col  gap-5 py-4 lg:px-0 px-2">
+            {Array.from({ length: 3 }, (_, index) => (
+              <LoadingCardAvilableRoom key={index} index={index} />
+            ))}
           </div>
         ) : (
-          <div className=" lg:w-[75%] w-full lg:flex md:grid grid-cols-2 flex-col  gap-5 py-4 lg:px-0 px-2">
-            {roomData &&
-              roomData.map((data, index) => (
-                <div
-                  key={index}
-                  className="border w-full rounded-md shadow flex lg:flex-row flex-col px-3 py-3 gap-5 "
-                >
-                  <div className="lg:w-[40%] w-full">
-                    <img
-                      src={`http://127.0.0.1:8000${data.images[0]?.room_image}`} // Ensure this URL is correct
-                      alt="" // Consider adding a descriptive alt text for accessibility
-                      className="rounded w-full h-[230px]" // Tailwind CSS classes for styling
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-2 ">
-                    <h3 className="text-lg font-semibold">{data.room_type}</h3>
-                    <div className="flex flex-wrap gap-3">
-                      <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
-                        max. guests : {data.room_people} adults
-                      </p>
-                      <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
-                        bed type : 2 double or 1 king
-                      </p>
-                      <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
-                        size : 28 m²
-                      </p>
-                    </div>
-
-                    <div className="flex gap-4 items-center mt-2">
-                      {data.features?.slice(0, 3).map((feature, index) => (
-                        <div key={feature.id} className="flex gap-5">
-                          <img
-                            src={`${import.meta.env.VITE_BASE_URL}${
-                              feature.feature_images
-                            }`}
-                            alt=""
-                            width={25}
-                          />
-                          {index !== 2 && (
-                            <div className="border-l-2 border-gray-400 h-6 "></div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="text-sm text-red-600">
-                      Avaibale Room : {data.available_quantity}{" "}
-                    </div>
-                    <div className="text-[#882121] flex items-center gap-1 mt-1">
-                      <button
-                        className="uppercase font-semibold text-sm"
-                        onClick={() => {
-                          setModalVisible(!modalVisible);
-                          setRoomDeatils(data);
-                        }}
-                      >
-                        Room Details
-                      </button>
-                      <IoIosArrowRoundForward size={18} />
-                    </div>
-                    <div className="w-full flex items-start lg:items-end lg:justify-end  flex-col gap-2">
-                      <p className="font-semibold">
-                        {data.price} BDT /
-                        <span className="text-sm text-gray-500">night</span>
-                      </p>
-                      <button
-                        onClick={() => handlePrebooked(data)}
-                        className=" w-full lg:w-auto bg-[#795f9e] text-white px-10 py-1 rounded-xl text-lg"
-                      >
-                        Book Now
-                      </button>
-                    </div>
-                  </div>
+          <>
+            {messges ? (
+              <div className="lg:w-[75%] w-full mt-5">
+                <div className="border w-full h-[300px] flex items-center justify-center flex-col gap-3">
+                  <LuCalendarX2 size={60} className="text-red-700" />
+                  <h1 className="text-lg font-semibold">
+                    There are no available rooms for these dates.
+                  </h1>
+                  <h2>
+                    We recommend changing dates or decrease room when available
+                  </h2>
+                  <button
+                    onClick={() => setBookNowVisible(true)}
+                    className="bg-textColor px-4 py-2 text-white rounded-full text-xs uppercase font-medium"
+                  >
+                    Change Dates
+                  </button>
                 </div>
-              ))}
-          </div>
+              </div>
+            ) : (
+              <div className=" lg:w-[75%] w-full lg:flex md:grid grid-cols-2 flex-col  gap-5 py-4 lg:px-0 px-2">
+                {roomData &&
+                  roomData.map((data, index) => (
+                    <div
+                      key={index}
+                      className="border w-full rounded-md shadow flex lg:flex-row flex-col px-3 py-3 gap-5 "
+                    >
+                      <div className="lg:w-[40%] w-full">
+                        <img
+                          src={`${import.meta.env.VITE_BASE_URL}${
+                            data.images[0]?.room_image
+                          }`} // Ensure this URL is correct
+                          alt="" // Consider adding a descriptive alt text for accessibility
+                          className="rounded w-full h-[230px]" // Tailwind CSS classes for styling
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-2 ">
+                        <h3 className="text-lg font-semibold">
+                          {data.room_type}
+                        </h3>
+                        <div className="flex flex-wrap gap-3">
+                          <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
+                            max. guests : {data.room_people} adults
+                          </p>
+                          <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
+                            bed type : 2 double or 1 king
+                          </p>
+                          <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
+                            size : 28 m²
+                          </p>
+                        </div>
+
+                        <div className="flex gap-4 items-center mt-2">
+                          {data.features?.slice(0, 3).map((feature, index) => (
+                            <div key={feature.id} className="flex gap-5">
+                              <img
+                                src={`${import.meta.env.VITE_BASE_URL}${
+                                  feature.feature_images
+                                }`}
+                                alt=""
+                                width={25}
+                              />
+                              {index !== 2 && (
+                                <div className="border-l-2 border-gray-400 h-6 "></div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        <div className="text-sm text-red-600">
+                          Avaibale Room : {data.available_quantity}{" "}
+                        </div>
+                        <div className="text-[#882121] flex items-center gap-1 mt-1">
+                          <button
+                            className="uppercase font-semibold text-sm"
+                            onClick={() => {
+                              setModalVisible(!modalVisible);
+                              setRoomDeatils(data);
+                            }}
+                          >
+                            Room Details
+                          </button>
+                          <IoIosArrowRoundForward size={18} />
+                        </div>
+                        <div className="w-full flex items-start lg:items-end lg:justify-end  flex-col gap-2">
+                          <p className="font-semibold">
+                            {data.price} BDT /
+                            <span className="text-sm text-gray-500">night</span>
+                          </p>
+                          <button
+                            onClick={() => handlePrebooked(data)}
+                            className=" w-full lg:w-auto bg-[#795f9e] text-white px-10 py-1 rounded-xl text-lg"
+                          >
+                            Book Now
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </>
         )}
       </div>
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../../component/admin/Sidebar";
 import axiosInstance from "../../component/axioxinstance";
-
+import customer from "../../assets/images/customer.png"
 const AdminHome = () => {
   const [data, setData] = useState({});
 
@@ -41,7 +41,7 @@ const AdminHome = () => {
         <div className=" h-[30vh] border flex flex-col items-center justify-center gap-3 bg-yellow-800 rounded-md">
           <img
             className="w-[80px] h-[80px] "
-            src="/images/customer.png"
+            src={customer}
             alt="Course Image"
           />
           <p className="text-white text-lg font-medium">Total Customer ({data.distinct_customers})</p>

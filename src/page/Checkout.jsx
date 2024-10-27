@@ -359,7 +359,13 @@ const Checkout = () => {
       <div className="w-full flex md:flex-row flex-col gap-3">
         <div className="md:w-[25%]">
           <div className="w-full border flex flex-col  mt-4 rounded">
-            <img src="/images/banner2.jpg" alt="" className="rounded" />
+            <img
+              src={`${import.meta.env.VITE_BASE_URL}${
+                data.booking?.room_id.images[0].room_image
+              }`}
+              alt=""
+              className="rounded"
+            />
             <div className="px-2 py-3 flex flex-col gap-2 ">
               <h3 className="text-lg font-semibold">
                 Basundara Apartment, Dhaka

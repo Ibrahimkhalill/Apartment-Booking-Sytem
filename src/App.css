@@ -159,6 +159,20 @@ option {
   animation: zoomIn .8s ease-in-out; /* 0.3 seconds animation */
 }
 
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up > button {
+  animation: slide-up 0.5s ease forwards;
+}
 
 @media screen and (max-width: 768px) {
   :where(.css-dev-only-do-not-override-qnu6hi).ant-modal .ant-modal-close {

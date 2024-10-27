@@ -11,10 +11,7 @@ const CountdownTimer = ({
   setTimeLeft,
   timeLeft,
 }) => {
-
   const timerRef = useRef(null);
-
-
 
   const releaseRoom = useCallback(async () => {
     try {
@@ -65,7 +62,12 @@ const CountdownTimer = ({
   };
 
   if (timeLeft === null) {
-    return <div>Loading...</div>; // Show loading state while waiting for remaining time
+    return (
+      <div role="status" className="max-w-sm animate-pulse">
+        <div className="h-4 bg-gray-200 rounded-full dark:bg-gray-700 w-64 mb-4"></div>
+        <span className="sr-only">Loading...</span>
+      </div> // Show loading state while waiting for remaining time
+    );
   }
 
   return (

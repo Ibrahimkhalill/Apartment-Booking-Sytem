@@ -9,7 +9,9 @@ import LogoutModal from "./LogoutModal";
 const Sidebar = ({ children }) => {
   const username = useSelector((state) => state.authentication.username);
   const email = useSelector((state) => state.authentication.email);
-
+  const [isOpen, setIsOpen] = useState(false);
+  const isOpenRef = useRef(null);
+  const isOpenbuttonRef = useRef(null);
   const [dropdown, setDropDown] = useState(false);
   const dropDownRef = useRef(null);
   const buttonRef = useRef(null);
@@ -25,6 +27,14 @@ const Sidebar = ({ children }) => {
       ) {
         setDropDown(false); // Close the dropdown
       }
+      if (
+        isOpenRef.current &&
+        !isOpenRef.current.contains(event.target) &&
+        isOpenbuttonRef.current &&
+        !isOpenbuttonRef.current.contains(event.target)
+      ) {
+        setIsOpen(false); // Close the dropdown
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -37,6 +47,20 @@ const Sidebar = ({ children }) => {
   const onClose = () => {
     setIsVisible(false);
   };
+
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
+
+    return () => {
+      // Cleanup overflow style on modal close
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen]);
+
   return (
     <main>
       <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
@@ -44,6 +68,8 @@ const Sidebar = ({ children }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start rtl:justify-end">
               <button
+                onClick={toggleSidebar}
+                ref={isOpenbuttonRef}
                 data-drawer-target="logo-sidebar"
                 data-drawer-toggle="logo-sidebar"
                 aria-controls="logo-sidebar"
@@ -146,10 +172,17 @@ const Sidebar = ({ children }) => {
         </div>
       </nav>
 
+      <div
+        className={`${
+          isOpen ? "block" : "hidden"
+        } fixed inset-0 bg-slate-800 opacity-80 z-40 `}
+      ></div>
       <aside
         id="logo-sidebar"
-        className="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
-        aria-label="Sidebar"
+        ref={isOpenRef}
+        className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform transform bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
+          sm:translate-x-0`}
       >
         <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
           <ul className="space-y-2 font-medium">

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import roomVideo from "/video/room.mp4";
+import roomVideo from "../assets/video/room.mp4";
 import { useEffect, useState } from "react";
 import axiosInstance from "../component/axioxinstance";
 import Loading from "../component/Loading";
@@ -29,7 +29,7 @@ const Room = () => {
         const response = await axiosInstance.get("/api/get_room/");
         if (response.status === 200) {
           setRoom(response.data);
-          setInterval(() => {
+          setTimeout(() => {
             setLoading(false);
           }, 1000);
         }
@@ -108,8 +108,12 @@ const Room = () => {
       }
     }
   };
+
   useEffect(() => {
+    console.log("kjfds", booknowVisible);
+
     document.body.style.overflow = booknowVisible ? "hidden" : "auto";
+
     return () => {
       // Cleanup overflow style on modal close
       document.body.style.overflow = "auto";
@@ -124,6 +128,7 @@ const Room = () => {
           autoPlay
           muted
           loop
+          playsInline
           className="w-full h-full object-cover"
         ></video>
 
@@ -137,7 +142,7 @@ const Room = () => {
           </p>
         </div>
       </div>
-      <div className="max-w-[80%] my-10">
+      <div className="md:max-w-[80%] px-4 my-10">
         <div className="tracking-wider leading-7">
           Come and experience what our guests talk widely about – splendid
           feelings of staying very close to the backwater and far from the
@@ -202,8 +207,8 @@ const Room = () => {
           <div className="fixed inset-0 bg-slate-800 opacity-80 z-40"></div>
 
           {/* Modal */}
-          <div className=" duration-500 ease-in-out transition-transform shadow-custom xl:w-[61%] md:w-[95%] overflow-hidden w-full fixed md:h-auto h-screen z-50 xl:top-16 md:top-28 top-0 left-1/2 -translate-x-1/2 border bg-white  border-[#795f9e] md:px-6 md:py-5 pl-3 pr-3 md:rounded-lg ">
-            <div className="pb-4 flex items-center justify-between">
+          <div className=" duration-500 ease-in-out transition-transform shadow-custom xl:w-[61%] md:w-[95%] overflow-hidden w-full fixed md:h-auto h-screen z-50 xl:top-16 md:top-28 top-0 left-1/2 -translate-x-1/2 border bg-white  md:border-[#795f9e] md:px-6 md:py-5 pl-3 pr-3 md:rounded-lg ">
+            <div className="py-4 flex items-center justify-between">
               <h1 className="text-2xl font-medium">Choose dates</h1>
               <button onClick={() => setBookNowVisible(false)}>
                 <IoCloseSharp size={30} />
@@ -225,11 +230,13 @@ const Room = () => {
           </div>
         </>
       )}
-      <MessagesModal
-        setMessgesModalVisible={setMessgesModalVisible}
-        messagesmodalVisible={messagesmodalVisible}
-        data={messges}
-      />
+      {messagesmodalVisible && (
+        <MessagesModal
+          setMessgesModalVisible={setMessgesModalVisible}
+          messagesmodalVisible={messagesmodalVisible}
+          data={messges}
+        />
+      )}
     </div>
   );
 };

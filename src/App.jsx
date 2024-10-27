@@ -31,6 +31,7 @@ import { useEffect } from "react";
 import { setUsername, setEmail, setLoggedIn } from "./component/authSlice";
 import { useDispatch } from "react-redux";
 import AddDisplaySlider from "./page/admin/AddDisplaySlider";
+import FloatingSocailButton from "./component/FloatingSocailButton";
 
 function App() {
   return (
@@ -45,7 +46,16 @@ const AuthProvider = () => {
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
-        <Route path="*" element={<NotfoundPage />} />
+        <Route
+          path="*"
+          element={
+            <>
+             <Navbar />
+              <NotfoundPage />
+              <Footer />
+            </>
+          }
+        />
         <Route
           path="/admin/login"
           element={<ProtectedLoginRoute component={<Login />} />}
@@ -60,6 +70,7 @@ const AuthProvider = () => {
             <>
               <Navbar />
               <Home />
+              <FloatingSocailButton />
               <Footer />
             </>
           }
@@ -78,6 +89,7 @@ const AuthProvider = () => {
               <>
                 <Navbar />
                 <AvilableRoom />
+                <FloatingSocailButton />
                 <Footer />
               </>
             </QueryGuard>
@@ -113,6 +125,7 @@ const AuthProvider = () => {
             <>
               <Navbar />
               <Contact />
+              <FloatingSocailButton />
               <Footer />
             </>
           }
@@ -123,6 +136,7 @@ const AuthProvider = () => {
             <>
               <Navbar />
               <About />
+              <FloatingSocailButton />
               <Footer />
             </>
           }
@@ -133,6 +147,7 @@ const AuthProvider = () => {
             <>
               <Navbar />
               <Room />
+              <FloatingSocailButton />
               <Footer />
             </>
           }

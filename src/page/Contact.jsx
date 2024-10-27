@@ -21,17 +21,17 @@ const Contact = () => {
       <div className="container m-auto py-10 sm:w-[70%] w-full flex md:flex-row flex-col px-3">
         <div className="sm:w-[40%] w-full flex flex-col gap-3">
           <h1 className="text-xl py-2 font-semibold text-[#795f9e]">Conatct Information</h1>
-          <h2 className="sm:text-4xl text-2xl">Basundara Apartment, Dhaka</h2>
+          <h2 className="sm:text-4xl text-xl">Basundara Apartment, Dhaka</h2>
 
-          <p className=" py-2 text-lg">
+          <p className=" py-2 md:text-lg">
             Bangabandhu Udyan (Bell’s Park) Band Road, Barisal 8200, Bangladesh.
           </p>
-          <div className="flex items-start flex-col gap-3 text-lg">
+          <div className="flex items-start flex-col gap-3 md:text-lg">
             <span className="font-medium">Phone Number:</span>
             <p>+880171 3056 368 (Hotline),</p>
             <p>+880171 3056 368 (Marketing),</p>
           </div>
-          <p className="py-3 text-lg ">
+          <p className="py-3 md:text-lg ">
            <span className="font-medium">Email: </span> reservation@hotelgrandparkbarisal.com
           </p>
         </div>

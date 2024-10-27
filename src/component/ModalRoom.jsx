@@ -84,7 +84,7 @@ const CustomModalRoom = ({ modalVisible, setModalVisible, data, modalRef }) => {
                     } duration-700 ease-in-out w-full h-full`}
                   >
                     <img
-                      src={`http://127.0.0.1:8000${slide?.room_image}`}
+                      src={`${import.meta.env.VITE_BASE_URL}${slide?.room_image}`}
                       className="lg:rounded-md w-full h-full object-cover"
                       alt={`Slide ${index + 1}`}
                     />
@@ -135,7 +135,7 @@ const CustomModalRoom = ({ modalVisible, setModalVisible, data, modalRef }) => {
                           className="flex flex-col items-center justify-center text-center text-sm mt-4"
                         >
                           <img
-                            src={`http://127.0.0.1:8000${item.feature_images}`}
+                            src={`${import.meta.env.VITE_BASE_URL}${item.feature_images}`}
                             alt=""
                             width={25}
                           />

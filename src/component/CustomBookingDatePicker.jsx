@@ -4,6 +4,7 @@ import { MdDateRange } from "react-icons/md";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
+import { MdArrowBack } from "react-icons/md";
 
 import { FaPlus } from "react-icons/fa6";
 import { LuHotel } from "react-icons/lu";
@@ -135,13 +136,16 @@ const CustomBookingDatePicker = ({ width }) => {
     setGuestCardVisible(false);
     setShowDatePickers(!showDatePickers);
   };
+  const isPrevDisabled = currentMonth.isSame(today, "month");
 
   const handleNextMonth = () => {
     setCurrentMonth(currentMonth.add(1, "month"));
   };
 
   const handlePrevMonth = () => {
-    setCurrentMonth(currentMonth.subtract(1, "month"));
+    if (!isPrevDisabled) {
+      setCurrentMonth(currentMonth.subtract(1, "month"));
+    }
   };
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -309,14 +313,21 @@ const CustomBookingDatePicker = ({ width }) => {
             {showDatePickers && (
               <div
                 ref={dropdownRef}
-                className={`sm:absolute fixed md:top-[120px] lg:top-[140px] xl:top-[90px] flex flex-col py-5 bg-white md:left-0 right-0 z-50 w-full ${
+                className={`sm:absolute fixed md:top-[120px] lg:top-[140px] xl:top-[80px] flex flex-col py-5 bg-white md:left-0 right-0 z-50 w-full ${
                   width
-                    ? "h-[95vh] bottom-0"
-                    : "h-[80vh]  md:h-[350px] bottom-0 xl:w-[45vw] md:w-[70vw]"
-                } xl:w-auto rounded-t-md md:rounded-md shadow-custom transition-transform duration-300 flex items-center justify-center ${
+                    ? "h-screen bottom-0"
+                    : "h-[80vh]  md:h-[350px] bottom-0 xl:w-[50vw] 2xl:w-[45vw] md:w-[70vw]"
+                }  md:rounded-md shadow-custom transition-transform duration-300 flex items-center justify-center ${
                   showDatePickers ? "translate-y-0" : "translate-y-full"
                 }`}
               >
+                <button
+                 
+                  className="w-full flex items-center mb-3 px-3 border-b pb-3 gap-2 md:hidden "
+                >
+                  <MdArrowBack onClick={() => setShowDatePickers(false)} size={20} color="black" className="mt-1" />{" "}
+                  <span className="text-base font-medium">Dates</span>
+                </button>
                 <div
                   className={`px-5 flex md:flex-row flex-col md:gap-10 ${
                     width ? "gap-7 " : ""
@@ -324,9 +335,19 @@ const CustomBookingDatePicker = ({ width }) => {
                 >
                   {/* Left (Current Month) */}
                   <div className="flex flex-col">
-                    <div className="flex justify-between items-center mb-2">
-                      <button onClick={handlePrevMonth}>
-                        <IoIosArrowBack size={20} />
+                    <div className={` flex justify-between items-center mb-2`}>
+                      <button
+                        onClick={handlePrevMonth}
+                        disabled={isPrevDisabled}
+                      >
+                        <IoIosArrowBack
+                          size={20}
+                          className={`${
+                            isPrevDisabled
+                              ? "text-gray-500 cursor-not-allowed"
+                              : ""
+                          }`}
+                        />
                       </button>
                       <h3 className="font-bold text-lg text-center">
                         {currentMonth.format("MMMM YYYY")}
@@ -369,18 +390,18 @@ const CustomBookingDatePicker = ({ width }) => {
                                 ? "text-gray-400"
                                 : hasUserSelected
                                 ? day.isSame(checkInDate)
-                                  ? "text-white rounded-l bg-blue-500"
+                                  ? "text-white rounded-l bg-textColor"
                                   : day.isSame(checkOutDate)
-                                  ? "text-white rounded-r bg-blue-500"
+                                  ? "text-white rounded-r bg-textColor"
                                   : isInRange(day)
                                   ? "bg-gray-300"
                                   : isInHoverRange(day)
                                   ? "bg-gray-300"
                                   : "hover:bg-gray-300"
                                 : day.isSame(today, "day")
-                                ? "text-white bg-blue-500 rounded-l"
+                                ? "text-white bg-textColor rounded-l"
                                 : day.isSame(today.add(1, "day"), "day")
-                                ? "text-white bg-blue-500 rounded-r"
+                                ? "text-white bg-textColor rounded-r"
                                 : "hover:bg-gray-300"
                             }`}
                             onClick={() => !shouldHide && handleDateClick(day)}
@@ -440,9 +461,9 @@ const CustomBookingDatePicker = ({ width }) => {
                                 : day.isBefore(today, "day")
                                 ? "text-gray-400"
                                 : day.isSame(checkInDate)
-                                ? "text-white rounded-l bg-blue-500"
+                                ? "text-white rounded-l bg-textColor"
                                 : day.isSame(checkOutDate)
-                                ? "text-white rounded-r bg-blue-500"
+                                ? "text-white rounded-r bg-textColor"
                                 : isInRange(day)
                                 ? "bg-gray-300"
                                 : isInHoverRange(day)

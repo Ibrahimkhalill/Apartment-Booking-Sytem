@@ -303,6 +303,19 @@ const Checkout = () => {
     } else if (location.state?.uuid) {
       fetchBookingDetails(location.state?.uuid); // Fallback to the UUID from the state
     }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        // If the page is visible, restart the timer
+        fetchBookingDetails();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
   // 3b1ccb1b-56cd-4a88-a3ec-b72c24b87f73
 
@@ -363,7 +376,13 @@ const Checkout = () => {
         <div className="w-full flex md:flex-row flex-col gap-3">
           <div className="md:w-[25%]">
             <div className="w-full border flex flex-col  mt-4 rounded">
-              <img src="/images/banner2.jpg" alt="" className="rounded" />
+              <img
+                src={`${import.meta.env.VITE_BASE_URL}${
+                  data.booking?.room_id.images[0].room_image
+                }`}
+                alt=""
+                className="rounded"
+              />
               <div className="px-2 py-3 flex flex-col gap-2 ">
                 <h3 className="text-lg font-semibold">
                   Basundara Apartment, Dhaka

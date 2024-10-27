@@ -126,7 +126,7 @@ const RoomDeatils = () => {
       <div className="w-full md:h-[80vh] h-[50vh] relative">
         {data?.images?.[0]?.room_image ? (
           <img
-            src={`http://127.0.0.1:8000${data.images[0].room_image}`}
+            src={`${import.meta.env.VITE_BASE_URL}${data.images[0].room_image}`}
             className="w-full h-full object-cover"
             alt="Room Image"
           />
@@ -207,7 +207,7 @@ const RoomDeatils = () => {
                 {data?.features?.map((item) => (
                   <div key={item.id} className="flex gap-4">
                     <img
-                      src={`http://127.0.0.1:8000${item.feature_images}`}
+                      src={`${import.meta.env.VITE_BASE_URL}${item.feature_images}`}
                       alt=""
                       className="w-9  h-9 object-cover"
                     />
@@ -228,7 +228,7 @@ const RoomDeatils = () => {
                   } duration-700 ease-in-out w-full h-full`}
                 >
                   <img
-                    src={`http://127.0.0.1:8000${slide?.room_image}`}
+                    src={`${import.meta.env.VITE_BASE_URL}${slide?.room_image}`}
                     className="lg:rounded-md w-full h-full object-cover"
                     alt={`Slide ${index + 1}`}
                   />

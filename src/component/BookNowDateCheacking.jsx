@@ -266,11 +266,7 @@ const BookNowDateCheacking = ({ width }) => {
                           </div>
                         </div>
                       </div>
-                      {showDatePickers ? (
-                        <IoIosArrowUp size={20} className="cursor-pointer" />
-                      ) : (
-                        <IoIosArrowDown size={20} className="cursor-pointer" />
-                      )}
+                     
                     </div>
                   </div>
                 </div>
@@ -288,11 +284,7 @@ const BookNowDateCheacking = ({ width }) => {
                           </div>
                         </div>
                       </div>
-                      {showDatePickers ? (
-                        <IoIosArrowUp size={20} className="cursor-pointer" />
-                      ) : (
-                        <IoIosArrowDown size={20} className="cursor-pointer" />
-                      )}
+                    
                     </div>
                   </div>
                 </div>
@@ -398,7 +390,7 @@ const BookNowDateCheacking = ({ width }) => {
           className={`flex flex-col py-5 bg-white max-h-[50vh] overflow-y-auto w-full xl:w-auto rounded-t-md md:rounded-md transition-transform duration-300 items-center justify-start`} // justify-start to align content at the top
           >
           <div
-            className={`px-5 flex md:flex-row flex-col md:gap-10  ${
+            className={`px-5 flex md:flex-row flex-col md:gap-10 gap-5  ${
               width ? "gap-7 " : ""
             }`}
           >

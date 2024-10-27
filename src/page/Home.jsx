@@ -153,7 +153,7 @@ function Home() {
               Basundara Apartment
             </h1>
             <p
-              className="text-white  md:text-xl font-bold text-center"
+              className="text-white  md:text-xl font-bold "
               style={{ fontStyle: "italic" }}
             >
               Welcomes you to the city of the great saint Hazrat Shahjalal.
@@ -183,7 +183,7 @@ function Home() {
             {images.slice(0, 8).map((data, index) => (
               <div key={index} className="h-[300px] overflow-hidden">
                 <img
-                  src={`http://127.0.0.1:8000${data.room_image}`}
+                  src={`${import.meta.env.VITE_BASE_URL}${data.room_image}`}
                   alt=""
                   className="h-full w-full object-cover hover:scale-105 transition-transform duration-700 ease-in-out"
                 />
@@ -194,7 +194,7 @@ function Home() {
               {images.slice(1, 3).map((data, index) => (
                 <div key={index} className="h-[200px] ">
                   <img
-                    src={`http://127.0.0.1:8000${data.room_image}`}
+                    src={`${import.meta.env.VITE_BASE_URL}${data.room_image}`}
                     alt=""
                     className="h-full w-full object-cover"
                   />
@@ -204,7 +204,7 @@ function Home() {
             {images.slice(4, 5).map((data, index) => (
               <div key={index} className="h-[410px] ">
                 <img
-                  src={`http://127.0.0.1:8000${data.room_image}`}
+                  src={`${import.meta.env.VITE_BASE_URL}${data.room_image}`}
                   alt=""
                   className="h-full w-full object-cover"
                 />
@@ -214,7 +214,7 @@ function Home() {
               {images.slice(6, 8).map((data, index) => (
                 <div key={index} className="h-[200px] ">
                   <img
-                    src={`http://127.0.0.1:8000${data.room_image}`}
+                    src={`${import.meta.env.VITE_BASE_URL}${data.room_image}`}
                     alt=""
                     className="h-full w-full object-cover"
                   />
@@ -226,7 +226,7 @@ function Home() {
             {images.slice(9).map((data, index) => (
               <div key={index} className="h-[410px] ">
                 <img
-                  src={`http://127.0.0.1:8000${data.room_image}`}
+                  src={`${import.meta.env.VITE_BASE_URL}${data.room_image}`}
                   alt=""
                   className="h-full w-full object-cover"
                 />

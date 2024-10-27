@@ -11,6 +11,7 @@ import { MdDateRange } from "react-icons/md";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
+import LoadingCardRoom from "../../component/LoadingCardRoom";
 const AddReservation = () => {
   const checkInDate = useSelector((state) => state.booking.checkInDate);
   const checkOutDate = useSelector((state) => state.booking.checkOutDate);
@@ -20,6 +21,7 @@ const AddReservation = () => {
   const [data, setData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoaing] = useState(false);
+  const [loadingCard, setLoadingCard] = useState(false);
   const navigate = useNavigate();
   const [roomDeatils, setRoomDeatils] = useState(null);
   const [messagesmodalVisible, setMessgesModalVisible] = useState(false);
@@ -101,7 +103,28 @@ const AddReservation = () => {
   };
 
   useEffect(() => {
-    handleSearch();
+    const handleDataSearch = async () => {
+      setLoadingCard(true);
+      try {
+        const response = await axiosInstance.post("/api/get_available_rooms/", {
+          checkInDate: checkInDate?.format("YYYY-MM-DD"),
+          checkOutDate: checkOutDate?.format("YYYY-MM-DD"),
+          room_type: selectedRoom,
+          rooms: rooms,
+        });
+
+        if (response.status === 200) {
+          console.log(response.data);
+
+          setRoomData(response.data);
+          handleSetData({ checkInDate, checkOutDate, rooms });
+          setLoadingCard(false);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    handleDataSearch();
     fetchdata();
   }, []);
   return (
@@ -169,83 +192,95 @@ const AddReservation = () => {
               </button>
             </button>
           </div>
-          <div className="  w-full  md:grid xl:grid-cols-3 md:grid-cols-2 flex-col  gap-5 py-4 lg:px-0 px-2">
-            {roomData &&
-              roomData.map((data, index) => (
-                <div
-                  key={index}
-                  className="border 2xl:h-[75vh] lg:h-[64vh]  h-auto relative w-full rounded-md shadow flex  flex-col px-3 py-3 gap-5 "
-                >
-                  <div className="lg:w-100%] w-full">
-                    <img
-                      src={`http://127.0.0.1:8000${data.room_data?.images[0]?.room_image}`} // Ensure this URL is correct
-                      alt="" // Consider adding a descriptive alt text for accessibility
-                      className="rounded w-full h-[230px]" // Tailwind CSS classes for styling
-                    />
-                  </div>
+          <div className="  w-full  md:grid xl:grid-cols-3 md:grid-cols-2 flex-col gap-5 py-4 lg:px-0 px-2">
+            {loadingCard ? (
+              Array.from({ length: 3 }, (_, index) => (
+                <LoadingCardRoom key={index} index={index} />
+              ))
+            ) : (
+              <>
+                {roomData &&
+                  roomData.map((data, index) => (
+                    <div
+                      key={index}
+                      className="border 2xl:h-[75vh] lg:h-[64vh] md:mb-0 mb-5  h-auto relative w-full rounded-md shadow flex  flex-col px-3 py-3 gap-5 "
+                    >
+                      <div className="lg:w-100%] w-full">
+                        <img
+                          src={`${import.meta.env.VITE_BASE_URL}${
+                            data.room_data?.images[0]?.room_image
+                          }`} // Ensure this URL is correct
+                          alt="" // Consider adding a descriptive alt text for accessibility
+                          className="rounded w-full h-[230px]" // Tailwind CSS classes for styling
+                        />
+                      </div>
 
-                  <div className="flex flex-col gap-2 ">
-                    <h3 className="text-lg font-semibold">
-                      {data.room_data.room_type}
-                    </h3>
-                    <div className="flex flex-wrap gap-3">
-                      <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
-                        max. guests : {data.room_data.room_people} adults
-                      </p>
-                      <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
-                        bed type :{data.room_data.bed_type}
-                      </p>
-                      <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
-                        size : {data.room_data.size} m²
-                      </p>
-                    </div>
+                      <div className="flex flex-col gap-2 ">
+                        <h3 className="text-lg font-semibold">
+                          {data.room_data.room_type}
+                        </h3>
+                        <div className="flex flex-wrap gap-3">
+                          <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
+                            max. guests : {data.room_data.room_people} adults
+                          </p>
+                          <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
+                            bed type :{data.room_data.bed_type}
+                          </p>
+                          <p className="bg-gray-200 px-2 py-1 text-sm rounded-lg">
+                            size : {data.room_data.size} m²
+                          </p>
+                        </div>
 
-                    <div className="flex gap-4 items-center mt-2">
-                      {data.room_data?.features
-                        ?.slice(0, 3)
-                        .map((feature, index) => (
-                          <div key={feature.id} className="flex gap-5">
-                            <img
-                              src={`http://127.0.0.1:8000${feature.feature_images}`}
-                              alt=""
-                              width={25}
-                            />
-                            {index !== 2 && (
-                              <div className="border-l-2 border-gray-400 h-6 "></div>
-                            )}
-                          </div>
-                        ))}
-                    </div>
-                    <div className="text-sm text-red-600">
-                      Avaibale Room : {data.available_rooms}{" "}
-                    </div>
-                    <div className="text-[#882121] flex items-center gap-1 mt-1">
+                        <div className="flex gap-4 items-center mt-2">
+                          {data.room_data?.features
+                            ?.slice(0, 3)
+                            .map((feature, index) => (
+                              <div key={feature.id} className="flex gap-5">
+                                <img
+                                  src={`${import.meta.env.VITE_BASE_URL}${
+                                    feature.feature_images
+                                  }`}
+                                  alt=""
+                                  width={25}
+                                />
+                                {index !== 2 && (
+                                  <div className="border-l-2 border-gray-400 h-6 "></div>
+                                )}
+                              </div>
+                            ))}
+                        </div>
+                        <div className="text-sm text-red-600">
+                          Avaibale Room : {data.available_rooms}{" "}
+                        </div>
+                        <div className="text-[#882121] flex items-center gap-1 mt-1">
+                          <button
+                            className="uppercase font-semibold text-sm"
+                            onClick={() => {
+                              setModalVisible(!modalVisible);
+                              setRoomDeatils(data);
+                            }}
+                          >
+                            Room Details
+                          </button>
+                          <IoIosArrowRoundForward size={18} />
+                        </div>
+                        <div className="w-full flex items-start   flex-col gap-2">
+                          <p className="font-semibold">
+                            {data.room_data?.price} BDT /
+                            <span className="text-sm text-gray-500">night</span>
+                          </p>
+                        </div>
+                      </div>
                       <button
-                        className="uppercase font-semibold text-sm"
-                        onClick={() => {
-                          setModalVisible(!modalVisible);
-                          setRoomDeatils(data);
-                        }}
+                        onClick={() => handlePrebooked(data)}
+                        className=" md:w-[96%] md:absolute bottom-3 left-2 bg-[#795f9e] text-white px-5  py-1 rounded-lg text-lg"
                       >
-                        Room Details
+                        Book Now
                       </button>
-                      <IoIosArrowRoundForward size={18} />
                     </div>
-                    <div className="w-full flex items-start   flex-col gap-2">
-                      <p className="font-semibold">
-                        {data.room_data?.price} BDT /
-                        <span className="text-sm text-gray-500">night</span>
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handlePrebooked(data)}
-                    className=" md:w-[96%] md:absolute bottom-3 left-2 bg-[#795f9e] text-white px-5  py-1 rounded-lg text-lg"
-                  >
-                    Book Now
-                  </button>
-                </div>
-              ))}
+                  ))}
+              </>
+            )}
           </div>
         </div>
       </div>

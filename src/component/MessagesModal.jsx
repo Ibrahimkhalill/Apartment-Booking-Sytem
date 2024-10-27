@@ -49,7 +49,7 @@ const MessagesModal = ({
 
   return (
     <>
-      <div className="fixed   inset-0 z-50 flex items-start lg:justify-center justify-start bg-black bg-opacity-90  ">
+      <div className="fixed   inset-0 z-50 flex lg:items-start  lg:justify-center justify-center bg-black bg-opacity-95  ">
         {/* Modal Content */}
 
         <div
@@ -57,20 +57,19 @@ const MessagesModal = ({
             !animation
               ? "MessagesModalAnimationDown "
               : "MessagesModalAnimationUp"
-          }  relative  md:rounded-md lg:pl-10 lg:px-2 lg:py-10 my-10 w-full lg:w-[1000px] md:h-auto h-full overflow-y-auto`}
+          }  relative  md:rounded-md lg:pl-10 lg:px-2 lg:py-10 my-10 w-[90%] lg:w-[1000px] md:h-auto h-full flex items-center justify-center overflow-y-auto`}
         >
-          {prebookingId &&
-            (data != "Prebooking not found")&&(
-              <div className="absolute top-[5px] text-white text-xl font-medium">
-                Your session has expired.
-              </div>
-            )}
+          {prebookingId && data != "Prebooking not found" && (
+            <div className="absolute lg:top-[5px] md:top-[38%] top-[30%] lg:left-10 left-0  text-white text-xl font-medium">
+              Your session has expired.
+            </div>
+          )}
 
           <div className="w-full flex flex-col items-center justify-center gap-5 bg-white py-14 rounded">
             {data == "Prebooking not found" && (
               <BiError size={80} className="text-red-700" />
             )}
-            <div className="font-medium text-lg w-[50%] text-center">
+            <div className="font-medium text-lg lg:w-[50%] md:px-0 px-2 text-center ">
               {data}
             </div>
             {!prebookingId && (
