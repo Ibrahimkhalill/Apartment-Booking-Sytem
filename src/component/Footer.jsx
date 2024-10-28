@@ -13,7 +13,7 @@ function Footer() {
                 alt="FlowBite Logo"
               />
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                Basundara Apartment
+                Le Blossom Apartment
               </span>
             </a>
           </div>
@@ -79,7 +79,7 @@ function Footer() {
           <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
             © 2024
             <a href="https://flowbite.com/" className="hover:underline">
-               Ibrahim Khalil
+              Ibrahim Khalil
             </a>
             . All Rights Reserved.
           </span>

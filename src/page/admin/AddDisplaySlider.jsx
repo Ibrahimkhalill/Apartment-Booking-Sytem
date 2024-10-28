@@ -218,7 +218,7 @@ const AddDisplaySlider = () => {
           Add Display Slider
         </h3>
         <div className="border w-full  shadow-small px-2 py-3 flex flex-col gap-4   justify-center">
-          <div className="flex md:flex-row flex-col gap-4 items-center  justify-center">
+          <div className="flex xl:flex-row flex-col gap-4 items-strat  justify-center">
             <div className="flex flex-col gap-5 w-full">
               <div className="flex gap-2 md:items-center relative md:flex-row flex-col w-full ">
                 <label
@@ -235,7 +235,7 @@ const AddDisplaySlider = () => {
                     formErrors.sliderName
                       ? "border-red-700"
                       : "border-slate-300"
-                  }  rounded-md md:w-[29.8vw] w-full`}
+                  }  rounded-md xl:w-[29.8vw] w-full`}
                   onChange={(e) => {
                     setSliderName(e.target.value);
                     formErrors.sliderName = "";
@@ -263,7 +263,7 @@ const AddDisplaySlider = () => {
                     formErrors.sliderDesCription
                       ? "border-red-700"
                       : "border-slate-300"
-                  }  rounded-md md:w-[29.8vw] w-full resize-none`}
+                  }  rounded-md xl:w-[29.8vw] w-full resize-none`}
                   onChange={(e) => {
                     setsliderDescription(e.target.value);
                     formErrors.sliderDesCription = "";
@@ -291,7 +291,7 @@ const AddDisplaySlider = () => {
                     formErrors.sliderButton
                       ? "border-red-700"
                       : "border-slate-300"
-                  }  rounded-md md:w-[29.8vw] w-full`}
+                  }  rounded-md xl:w-[29.8vw] w-full`}
                   onChange={(e) => {
                     setsliderButton(e.target.value);
                     formErrors.sliderButton = "";
@@ -321,7 +321,7 @@ const AddDisplaySlider = () => {
                     formErrors.sliderImage
                       ? "border-red-700"
                       : "border-slate-300"
-                  }  rounded-md md:w-[29.8vw] w-full border  text-xs`}
+                  }  rounded-md xl:w-[29.8vw] w-full border  text-xs`}
                   onChange={(e) => {
                     handleImageFileChange(e.target.files[0]);
                     formErrors.sliderImage = "";
@@ -340,7 +340,7 @@ const AddDisplaySlider = () => {
                 >
                   Image Preview
                 </label>
-                <div className="md:w-[20vw] h-[20vh] border md:ml-2 flex items-center justify-center">
+                <div className="xl:w-[20vw] w-full h-[20vh] border md:ml-2 flex items-center justify-center">
                   {imagePreviews ? (
                     <img
                       src={imagePreviews}

@@ -8,10 +8,15 @@ import { IoIosArrowUp } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
 import { LuHotel } from "react-icons/lu";
 import { useSelector, useDispatch } from "react-redux";
-import { setCheckInDate, setCheckOutDate, setRooms } from "./bookingSlice";
+import { setCheckInDate, setCheckOutDate, setRooms } from "../bookingSlice";
 import { FaRegWindowMinimize } from "react-icons/fa6";
 
-const BookNowDateCheacking = ({ width }) => {
+const BookNowDateCheacking = ({
+  width,
+  setSelectedRoom,
+  selectedRoom,
+  data,
+}) => {
   const today = dayjs();
   const [showDatePickers, setShowDatePickers] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(today);
@@ -23,7 +28,7 @@ const BookNowDateCheacking = ({ width }) => {
   const checkOutDate = useSelector((state) => state.booking.checkOutDate);
   const hasUser = useSelector((state) => state.booking.hasuser);
   const rooms = useSelector((state) => state.booking.rooms);
-  const isPrevDisabled = currentMonth.isSame(today, "month");
+
   const dispatch = useDispatch();
 
   const [hasUserSelected, setHasUserSelected] = useState(
@@ -135,6 +140,7 @@ const BookNowDateCheacking = ({ width }) => {
     setGuestCardVisible(false);
     setShowDatePickers(!showDatePickers);
   };
+  const isPrevDisabled = currentMonth.isSame(today, "month");
 
   const handleNextMonth = () => {
     setCurrentMonth(currentMonth.add(1, "month"));
@@ -218,7 +224,7 @@ const BookNowDateCheacking = ({ width }) => {
             <div className=" flex  items-center justify-between w-full gap-2 pl-[2px]">
               <div className="md:flex items-center gap-2 hidden">
                 <MdDateRange size={22} className="text-gray-700" />
-                <div className="flex items-center justify-between xl:w-[16vw] md:w-[23vw]">
+                <div className="flex items-center justify-between xl:w-[16vw] md:w-[16vw]">
                   <div className="flex flex-col items-start gap-1">
                     <div className=" text-gray-500 truncate">Check In</div>
 
@@ -236,7 +242,7 @@ const BookNowDateCheacking = ({ width }) => {
               <div className="w-[1px] bg-slate-200 h-[10vh] md:block hidden"></div>
               <div className="md:flex items-center gap-2 hidden">
                 <MdDateRange size={22} className="text-gray-700" />
-                <div className="flex items-center justify-between xl:w-[16vw] md:w-[23vw]">
+                <div className="flex items-center justify-between xl:w-[16vw] md:w-[16vw]">
                   <div className="flex flex-col items-start gap-1">
                     <div className=" text-gray-500 truncate">Check Out</div>
 
@@ -266,7 +272,6 @@ const BookNowDateCheacking = ({ width }) => {
                           </div>
                         </div>
                       </div>
-                     
                     </div>
                   </div>
                 </div>
@@ -284,7 +289,6 @@ const BookNowDateCheacking = ({ width }) => {
                           </div>
                         </div>
                       </div>
-                    
                     </div>
                   </div>
                 </div>
@@ -293,9 +297,9 @@ const BookNowDateCheacking = ({ width }) => {
           </div>
 
           <div className="w-[1px] bg-slate-200 h-[10vh] md:block hidden"></div>
-          <div className="bg-white flex items-center relative  justify-between  w-full px-2 md:px-0">
+          <div className="bg-white flex items-center relative  justify-between w-full  px-2 md:px-0">
             <button
-              className="flex  items-center justify-between xl:w-[18vw] lg:w-[32vw] gap-2 w-full"
+              className="flex  items-center justify-between xl:w-[18vw] md:w-[20vw] gap-2 w-full"
               ref={flag1Ref}
               onClick={() => {
                 setGuestCardVisible(!guestCardVisible);
@@ -384,11 +388,32 @@ const BookNowDateCheacking = ({ width }) => {
               </div>
             )}
           </div>
+          <div className="w-[1px] bg-slate-200 h-[10vh] md:block hidden"></div>
+          <div className="flex items-center lg:w-[25vw] w-full px-2">
+            <LuHotel size={25} />
+            <div className="h-full flex flex-col items-start cursor-pointer w-full pl-2">
+              <div className="text-gray-500">Room type</div>
+              <select
+                className="border-0 font-medium cursor-pointer !p-0 w-full"
+                onChange={(e) => setSelectedRoom(e.target.value)}
+              >
+                <option value="">Select Room</option>
+                {data.map((item) => (
+                  <option key={item.id}>{item.room_type}</option>
+                ))}
+              </select>
+            </div>
+            {selectedRoom ? (
+              <IoIosArrowUp size={25} className="cursor-pointer" />
+            ) : (
+              <IoIosArrowDown size={25} className="cursor-pointer" />
+            )}
+          </div>
         </div>
         <div
           ref={dropdownRef}
-          className={`flex flex-col py-5 bg-white max-h-[50vh] overflow-y-auto w-full xl:w-auto rounded-t-md md:rounded-md transition-transform duration-300 items-center justify-start`} // justify-start to align content at the top
-          >
+          className={`flex flex-col py-5 bg-white max-h-[43vh] overflow-y-auto w-full xl:w-auto rounded-t-md md:rounded-md transition-transform duration-300 items-center justify-start`} // justify-start to align content at the top
+        >
           <div
             className={`px-5 flex md:flex-row flex-col md:gap-10 gap-5  ${
               width ? "gap-7 " : ""
@@ -440,18 +465,18 @@ const BookNowDateCheacking = ({ width }) => {
                           ? "text-gray-400" // Past dates styling
                           : hasUserSelected // Check if the user has made a selection
                           ? day.isSame(checkInDate)
-                            ? "text-white rounded-l bg-blue-500" // Check-in date styling
+                            ? "text-white rounded-l bg-textColor" // Check-in date styling
                             : day.isSame(checkOutDate)
-                            ? "text-white rounded-r bg-blue-500" // Check-out date styling
+                            ? "text-white rounded-r bg-textColor" // Check-out date styling
                             : isInRange(day)
                             ? "bg-gray-300" // Styling for dates between check-in and check-out
                             : isInHoverRange(day)
                             ? "bg-gray-300" // Hover range styling
                             : "hover:bg-gray-300" // Default hover styling
                           : day.isSame(today, "day") // Check if it's today
-                          ? "text-white bg-blue-500 rounded-l" // Apply rounded-l for today
+                          ? "text-white bg-textColor rounded-l" // Apply rounded-l for today
                           : day.isSame(today.add(1, "day"), "day") // Check if it's tomorrow
-                          ? "text-white bg-blue-500 rounded-r" // Apply rounded-r for tomorrow
+                          ? "text-white bg-textColor rounded-r" // Apply rounded-r for tomorrow
                           : "hover:bg-gray-300" // Default hover styling
                       }`}
                       onClick={() => !shouldHide && handleDateClick(day)} // Handle click if not hidden
@@ -507,9 +532,9 @@ const BookNowDateCheacking = ({ width }) => {
                           : day.isBefore(today, "day")
                           ? "text-gray-400"
                           : day.isSame(checkInDate)
-                          ? "text-white rounded-l bg-blue-500"
+                          ? "text-white rounded-l bg-textColor"
                           : day.isSame(checkOutDate)
-                          ? "text-white rounded-r bg-blue-500"
+                          ? "text-white rounded-r bg-textColor"
                           : isInRange(day)
                           ? "bg-gray-300"
                           : isInHoverRange(day)
@@ -527,8 +552,6 @@ const BookNowDateCheacking = ({ width }) => {
               </div>
             </div>
           </div>
-
- 
         </div>
       </div>
     </>

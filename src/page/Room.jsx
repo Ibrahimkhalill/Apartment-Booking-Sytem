@@ -162,8 +162,8 @@ const Room = () => {
                 key={index}
                 className={`${
                   (index + 1) % 2 === 0
-                    ? "flex flex-col lg:flex-row-reverse my-14 w-full gap-10 items-center"
-                    : "flex lg:flex-row flex-col my-14 w-full gap-10 items-center"
+                    ? "flex flex-col lg:flex-row-reverse my-14 w-full gap-10 items-start"
+                    : "flex lg:flex-row flex-col my-14 w-full gap-10 items-start"
                 }`}
               >
                 <div className="xl:h-[50vh] md:h-[30vh] lg:w-[50%] w-full overflow-hidden">

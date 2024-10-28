@@ -4,13 +4,12 @@ import { FaInstagram, FaFacebookF, FaXTwitter } from "react-icons/fa6";
 import { IoIosCall } from "react-icons/io";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { IoMdClose } from "react-icons/io";
-import logo from "../assets/images/logo-default-314x48.png"
+import logo from "../assets/images/logo-default-314x48.png";
 const Navbar = () => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [isFixed, setIsFixed] = useState(false); // State to handle fixed navbar
   // const [prevScrollPos, setPrevScrollPos] = useState(window.pageYOffset); // Track the previous scroll position
   const location = useLocation();
-
 
   // Scroll event listener
   // useEffect(() => {
@@ -76,12 +75,13 @@ const Navbar = () => {
             </div>
             {/* Center - Logo */}
             <div className="flex justify-center">
-              <a href="index.html">
-                <img
+              <a href="index.html" className="text-4xl uppercase font-medium font-serif">
+                {/* <img
                   src={logo}
                   alt="Logo"
                   className="h-12"
-                />
+                /> */}
+                Le Blossom Apartment
               </a>
             </div>
             {/* Right Side - Contact Info */}
@@ -97,13 +97,7 @@ const Navbar = () => {
           <div className="bg-gray-100 py-2 relative">
             <div className="flex justify-between items-center px-6 md:hidden">
               <div className="mobile-brand py-4 flex items-center justify-between w-full">
-                <Link to="/">
-                  <img
-                    src={logo}
-                    alt="Logo"
-                    className="h-7"
-                  />
-                </Link>
+                <Link to="/" className="text-lg uppercase font-medium">Le Blossom Apartment</Link>
                 <RxHamburgerMenu
                   size={26}
                   onClick={() => setMenuVisible(!menuVisible)}

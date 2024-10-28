@@ -219,7 +219,7 @@ const RoomDeatils = () => {
           </div>
 
           <div className="md:w-[40%] flex flex-col  gap-4 md:border-0 border-gray-400 pb-3">
-            <div className="xl:h-[40vh] md:h-[20vh] w-full">
+            <div className="xl:h-[40vh]  w-full">
               {data?.images?.map((slide, index) => (
                 <div
                   key={index}

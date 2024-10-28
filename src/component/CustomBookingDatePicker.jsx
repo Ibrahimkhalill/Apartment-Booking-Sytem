@@ -313,10 +313,10 @@ const CustomBookingDatePicker = ({ width }) => {
             {showDatePickers && (
               <div
                 ref={dropdownRef}
-                className={`sm:absolute fixed md:top-[120px] lg:top-[140px] xl:top-[80px] flex flex-col py-5 bg-white md:left-0 right-0 z-50 w-full ${
+                className={`sm:absolute fixed md:top-[120px] lg:top-[90px] xl:top-[80px] flex flex-col py-5 bg-white md:left-0 right-0 z-50 w-full ${
                   width
                     ? "h-screen bottom-0"
-                    : "h-[80vh]  md:h-[350px] bottom-0 xl:w-[50vw] 2xl:w-[45vw] md:w-[70vw]"
+                    : "h-[80vh]  md:h-[350px] bottom-0 xl:w-[50vw] 2xl:w-[45vw] md:w-[60vw]"
                 }  md:rounded-md shadow-custom transition-transform duration-300 flex items-center justify-center ${
                   showDatePickers ? "translate-y-0" : "translate-y-full"
                 }`}

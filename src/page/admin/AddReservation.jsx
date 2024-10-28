@@ -11,6 +11,7 @@ import { RiCloseLargeFill } from "react-icons/ri";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoIosArrowUp } from "react-icons/io";
 import LoadingCardRoom from "../../component/LoadingCardRoom";
+import BookNowDateCheacking from "../../component/admin/BookNowDateCheacking";
 const AddReservation = () => {
   const checkInDate = useSelector((state) => state.booking.checkInDate);
   const checkOutDate = useSelector((state) => state.booking.checkOutDate);
@@ -53,6 +54,8 @@ const AddReservation = () => {
 
         setRoomData(response.data);
         handleSetData({ checkInDate, checkOutDate, rooms });
+        setSelectedRoom("");
+        setSearchVisible(false);
         setLoaing(false);
       }
     } catch (error) {
@@ -180,12 +183,11 @@ const AddReservation = () => {
               className="flex items-center w-full py-1 xl:hidden"
               onClick={() => setSearchVisible(!searchVisible)}
             >
-              <input
-                type="text"
-                className="border-0 w-full rounded-full"
-                placeholder="what are you next going"
-                readOnly
-              />
+              <p className="w-full">
+                {checkInDate?.format("DD MMM")} -{" "}
+                {checkOutDate?.format("DD MMM")} | {rooms.length} rooms ,{" "}
+                {totalAdults} Adults
+              </p>
               <button className="bg-textColor py-2 px-2 text-white rounded-3xl">
                 <IoSearch size={25} />
               </button>
@@ -202,7 +204,7 @@ const AddReservation = () => {
                   roomData.map((data, index) => (
                     <div
                       key={index}
-                      className="border 2xl:h-[75vh] lg:h-[64vh] md:mb-0 mb-5  h-auto relative w-full rounded-md shadow flex  flex-col px-3 py-3 gap-5 "
+                      className="border 2xl:h-[75vh] md:h-[76vh] md:mb-0 mb-5  h-auto relative w-full rounded-md shadow flex  flex-col px-3 py-3 gap-5 "
                     >
                       <div className="lg:w-100%] w-full">
                         <img
@@ -284,34 +286,34 @@ const AddReservation = () => {
         </div>
       </div>
       {searchVisible && (
-        <div className="zoom-in fixed z-50 top-0 left-0 px-5 w-full h-screen bg-[#263341] flex flex-col items-center justify-between py-10">
-          <div className=" w-full flex items-end justify-end">
-            <RiCloseLargeFill
-              color="white"
-              size={30}
-              onClick={() => setSearchVisible(false)}
-            />
-          </div>
-          <div className="text-5xl text-white">Find your next experience</div>
-          <div className="py-5 lg:hidden block bg-white w-full  rounded-lg">
-            <div className="flex lg:flex-row flex-col gap-3 items-center justify-center  ">
-              <CustomBookingDatePicker hasuser={true} width="width" />
+        <>
+          <div className="fixed inset-0 bg-slate-800 opacity-80 z-40"></div>
+          <div className=" duration-500 ease-in-out transition-transform shadow-custom xl:w-[61%] md:w-[95%] overflow-hidden w-full fixed md:h-auto h-screen z-50 xl:top-16 md:top-28 top-0 left-1/2 -translate-x-1/2 border bg-white  md:border-[#795f9e] md:px-6 md:py-5 pl-3 pr-3 md:rounded-lg ">
+            <div className="py-4 flex items-center justify-between">
+              <h1 className="text-2xl font-medium">Choose dates</h1>
+              <button onClick={() => setSearchVisible(false)}>
+                <RiCloseLargeFill size={30} />
+              </button>
+            </div>
+
+            <div className="flex  flex-row md:gap-3 gap-4 items-center justify-center">
+              <BookNowDateCheacking
+                setSelectedRoom={setSelectedRoom}
+                selectedRoom={selectedRoom}
+                data={data}
+              />
+            </div>
+
+            <div className="float-right my-3 md:w-auto w-full">
+              <button
+                onClick={handleSearch}
+                className="bg-textColor md:w-auto w-full py-3 px-10 text-white rounded-full"
+              >
+                Book
+              </button>
             </div>
           </div>
-          <div className=" mt-3 flex flex-col gap-3 w-[100%] lg:w-[20%]">
-            <div></div>
-            <button
-              className="bg-[#795f9e] uppercase text-white text-lg  w-full py-5 px-2 rounded-3xl"
-              type="submit"
-              onClick={() => {
-                handleSearch();
-                setSearchVisible(false);
-              }}
-            >
-              <span>Search</span>
-            </button>
-          </div>
-        </div>
+        </>
       )}
     </Sidebar>
   );

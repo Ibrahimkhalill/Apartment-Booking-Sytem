@@ -98,7 +98,7 @@ const Sidebar = ({ children }) => {
                   alt="FlowBite Logo"
                 />
                 <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-                  Basundara Apartment
+                Le Blossom Apartment
                 </span>
               </Link>
             </div>
@@ -324,7 +324,7 @@ const Sidebar = ({ children }) => {
         </div>
       </aside>
       <div className="p-4 sm:ml-64">
-        <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14 ">
+        <div className="p-1 lg:p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14 ">
           {children}
         </div>
       </div>

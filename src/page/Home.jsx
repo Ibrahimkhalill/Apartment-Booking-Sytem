@@ -150,7 +150,7 @@ function Home() {
         <div className="flex md:flex-row flex-col items-center w-full px-5 mt-10 gap-5">
           <div className="bg-slate-800 md:w-[60%] md:h-[50vh] flex flex-col md:gap-7 gap-4 md:items-start items-center justify-center px-5 py-4">
             <h1 className="text-white md:text-4xl text-2xl font-bold">
-              Basundara Apartment
+            Le Blossom Apartment
             </h1>
             <p
               className="text-white  md:text-xl font-bold "
